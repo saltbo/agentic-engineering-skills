@@ -95,11 +95,13 @@ restish get "$FA_MGMT/applications/$APP_ID" -o json
 
 # Create an application. Keep scopes ordinary; management scopes are reserved for flareauth-cli.
 restish post "$FA_MGMT/applications" \
-  name:"Example Web App" \
-  type:web \
-  redirectUris:'["https://app.example.com/callback"]' \
-  grantTypes:'["authorization_code","refresh_token"]' \
-  scopes:'["openid","profile","email"]' \
+  '{
+    "name": "Example Web App",
+    "clientType": "confidential_web",
+    "redirectUris": ["https://app.example.com/callback"],
+    "allowedGrantTypes": ["authorization_code", "refresh_token"],
+    "allowedScopes": ["openid", "profile", "email", "offline_access"]
+  }' \
   -o json
 
 # Update one field at a time when possible, then verify.
@@ -108,7 +110,12 @@ restish get "$FA_MGMT/applications/$APP_ID" -o json
 
 # Replace redirect URIs as a deliberate whole-list operation, then verify.
 restish put "$FA_MGMT/applications/$APP_ID/redirect-uris" \
-  redirectUris:'["https://app.example.com/callback","https://app.example.com/oauth/callback"]' \
+  '{
+    "redirectUris": [
+      "https://app.example.com/callback",
+      "https://app.example.com/oauth/callback"
+    ]
+  }' \
   -o json
 restish get "$FA_MGMT/applications/$APP_ID/redirect-uris" -o json
 
@@ -133,7 +140,7 @@ CONNECTOR_ID="conn_123"
 restish get "$FA_MGMT/connectors/$CONNECTOR_ID/readiness" -o json
 
 # Patch a connector narrowly, then verify the connector and readiness.
-restish patch "$FA_MGMT/connectors/$CONNECTOR_ID" enabled:true -o json
+restish patch "$FA_MGMT/connectors/$CONNECTOR_ID" '{"enabled": true}' -o json
 restish get "$FA_MGMT/connectors/$CONNECTOR_ID" -o json
 restish get "$FA_MGMT/connectors/$CONNECTOR_ID/readiness" -o json
 ```
@@ -147,8 +154,8 @@ Operations: `getSignInSettings`, `updateSignInSettings`.
 ```bash
 restish get "$FA_MGMT/sign-in-settings" -o json
 
-# Example narrow patch. Use fields from the current OpenAPI/schema for the deployed version.
-restish patch "$FA_MGMT/sign-in-settings" allowEmailPassword:true -o json
+# Example narrow patch. Use the nested UpdateSignInSettingsRequest shape.
+restish patch "$FA_MGMT/sign-in-settings" '{"signIn": {"passwordEnabled": true}}' -o json
 restish get "$FA_MGMT/sign-in-settings" -o json
 ```
 
@@ -159,8 +166,10 @@ Operations: `getBrandingSettings`, `updateBrandingSettings`, `uploadBrandingLogo
 ```bash
 restish get "$FA_MGMT/branding-settings" -o json
 
-# Example narrow patch.
-restish patch "$FA_MGMT/branding-settings" appName:"Example Auth" primaryColor:"#2563eb" -o json
+# Example narrow patch. Copy and visual branding are separate nested objects.
+restish patch "$FA_MGMT/branding-settings" \
+  '{"copy": {"productName": "Example Auth"}, "branding": {"primaryColor": "#2563eb"}}' \
+  -o json
 restish get "$FA_MGMT/branding-settings" -o json
 ```
 
@@ -173,8 +182,10 @@ Operations: `getAccountCenterSettings`, `updateAccountCenterSettings`.
 ```bash
 restish get "$FA_MGMT/account-center-settings" -o json
 
-# Example narrow patch.
-restish patch "$FA_MGMT/account-center-settings" enabled:true -o json
+# Example narrow patch. Account Center fields live under accountCenter.
+restish patch "$FA_MGMT/account-center-settings" \
+  '{"accountCenter": {"profileEditingEnabled": true, "sessionsViewEnabled": true}}' \
+  -o json
 restish get "$FA_MGMT/account-center-settings" -o json
 ```
 
