@@ -1,0 +1,4 @@
+interface:
+  display_name: "Best Engineering Practice"
+  short_description: "Apply architecture, testing, and delivery constraints"
+  default_prompt: "Use $best-engineering-practice to handle this task under explicit failure, architecture-boundary, layered-test, compatibility, and independent-review constraints while preserving the requested task mode."
