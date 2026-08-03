@@ -6,42 +6,51 @@ description: Enforce technology-independent and Web-specific engineering constra
 # Best Engineering Practice
 
 Produce correct software through explicit failure, simple design, unified
-boundaries, and reproducible evidence. Apply repository conventions where they
-do not violate the non-negotiable rules in this skill.
+boundaries, and reproducible evidence. Apply repository conventions only when
+they satisfy the non-negotiable Core.
 
-## Load The Relevant Guidance
+## Load Guidance By Responsibility
 
 Read [references/core.md](references/core.md) for every task.
 
-Read [references/backend.md](references/backend.md) for backend services, Web
-handlers, workers, scheduled jobs, CLI processes, persistence, or external
-integrations.
+Load architecture guidance for every affected runtime:
 
-Read [references/testing.md](references/testing.md) whenever work or review
-affects production behavior, tests, test infrastructure, CI quality gates, BDD
-specifications, contracts, migrations, or coverage policy.
+- Read [references/architecture/backend.md](references/architecture/backend.md)
+  for services, handlers, workers, scheduled jobs, CLI processes, persistence,
+  messaging, or external integrations.
+- Read [references/architecture/frontend.md](references/architecture/frontend.md)
+  for browser modules, UI, navigation, forms, design systems, client state or
+  persistence, accessibility, browser security, or client performance.
 
-For Web work, also read:
+Read [references/protocols/http.md](references/protocols/http.md) whenever work
+or review affects an HTTP request lifecycle, browser-server interaction, Web
+API, HTTP cache, authentication transport, or other HTTP contract.
 
-- [references/web.md](references/web.md) for concerns shared by browser, server,
-  and edge runtimes;
-- [references/frontend.md](references/frontend.md) when work or review affects frontend
-  modules, UI, navigation, forms, design systems, browser state or persistence,
-  accessibility, browser security, or client performance.
-- [references/frontend-testing.md](references/frontend-testing.md) when work or review affects
-  frontend tests, route or feature-operation registries, browser quality gates,
-  or the frontend behavior inventory.
+Load verification guidance whenever production behavior or its proof changes:
 
-Load both frontend and backend guidance for a vertical full-stack feature. When
-designing or changing a REST/OpenAPI contract, also use
+- Read [references/verification/testing.md](references/verification/testing.md)
+  for proof-layer selection, behavioral tests, deterministic execution,
+  contracts, BDD specifications, and E2E evidence.
+- Read [references/verification/quality-gates.md](references/verification/quality-gates.md)
+  for coverage thresholds, proof identities, inventory integrity, native test
+  reports, exceptions, and blocking CI gates.
+- Read [references/verification/backend.md](references/verification/backend.md)
+  when backend operations, repositories, adapters, consumers, migrations,
+  service lifecycle, observability, or dependency direction need proof.
+- Read [references/verification/frontend.md](references/verification/frontend.md)
+  when frontend routes, transports, feature operations, browser behavior,
+  accessibility, performance, security, or visual quality need proof.
+
+Load both architecture profiles and both verification profiles for a vertical
+full-stack feature. When designing or changing a REST/OpenAPI contract, also use
 `$best-openapi-design` if it is available in the workspace.
 
 ## Preserve The Requested Task Mode
 
 For a plan, explanation, diagnosis, inspection, or review, remain read-only.
-Apply this skill to evaluate the artifact and describe the required change,
-migration, tests, gates, and reviews. Do not implement, fix, migrate, commit, or
-publish unless the user also requests a change.
+Evaluate the artifact and describe the required change, migration, tests, gates,
+and reviews. Return analysis only; implementation requires explicit change
+authorization.
 
 For an authorized build, implementation, fix, or refactor, execute the workflow
 below. Repository-wide internal correction of an encountered Core violation is
@@ -57,11 +66,14 @@ and local conventions. State:
 - the observable outcome and completion evidence;
 - the consumers and public interfaces involved;
 - whether the affected behavior is unreleased or part of a supported release;
-- the trust, data, concurrency, compatibility, and operational boundaries.
+- the trust, data, concurrency, compatibility, and operational boundaries;
+- the architecture, protocol, and verification references loaded for the task.
 
-Resolve important ambiguity before fixing an interface or data model. Do not
-turn a suggested mechanism into a requirement without checking the underlying
-need.
+Resolve important ambiguity before fixing an interface or data model. Distinguish
+the required capability from any suggested mechanism.
+
+Completion criterion: every affected boundary and applicable reference is
+identified, and every hard-to-reverse ambiguity is resolved.
 
 ### 2. Design The Smallest Coherent Change
 
@@ -73,12 +85,17 @@ When logic becomes convoluted, inspect the data model and responsibility split.
 Restructure the root cause instead of adding conditionals, fallbacks, or
 defensive patches.
 
-If existing code violates a non-negotiable Core rule or solves the same problem
-through a competing pattern, do not copy it and do not leave a second local
-pattern. Keep the main task on its primary path while delegating the
-repository-wide migration when useful. Complete the migration without asking
-for authorization merely because it is large or slow. Preserve released
-behavior and apply the version and data-migration rules.
+After identifying a Core violation or competing pattern in affected code,
+define its structural signature, search the complete repository for equivalent
+instances, and record every match in a migration inventory. Keep the main task
+on its primary path. Delegate the migration when independent workers are
+available; otherwise complete it in the main context. Finish with one pattern
+and a final repository-wide search that finds no remaining match. Preserve
+released behavior and apply the version and data-migration rules.
+
+Completion criterion: the proposed slice owns one observable behavior, every
+affected contract and migration is accounted for, and the migration inventory
+has a defined zero-match condition.
 
 ### 3. Implement And Verify One Slice
 
@@ -94,26 +111,37 @@ production implementation. Test exported pure functions, immutable values, and
 UI components directly; do not manufacture interfaces or fakes for them.
 
 Run focused checks continuously. Maintain BDD traceability when observable
-product behavior changes. Meet the Core and testing-reference coverage rules,
-then run every configured formatter, build, type, static-analysis, test,
-coverage, contract, and generation gate. Never weaken or skip a gate to
+product behavior changes. Meet every loaded verification profile, then run
+every configured formatter, build, type, static-analysis, test, coverage,
+contract, generation, and architecture gate. Never weaken or skip a gate to
 manufacture success.
+
+Completion criterion: every changed behavior has mapped executable proof, every
+loaded verification gate passes, and the migration inventory is empty.
 
 ### 4. Review Independently
 
-Review non-mechanical changes along two separate axes:
+Review non-mechanical changes in two distinct contexts isolated from the
+implementation reasoning and from each other's initial findings:
 
 1. **Outcome:** Verify the requested behavior, scope, and supported contracts.
 2. **Engineering:** Verify errors, observability, tests, coverage, module
    ownership, dependencies, compatibility, security, and operability.
 
-Use independent reviewer context or Sub-agents for both axes. Verify and fix
-their findings, then rerun affected gates.
+Verify and fix both sets of findings, then rerun affected gates. When distinct
+independent contexts are unavailable, run the axes separately, report the
+missing independence, and leave the independent-review gate unmet.
+
+Completion criterion: both reviews are recorded, every finding is resolved or
+reported as unresolved, and every affected gate has been rerun.
 
 ### 5. Report Evidence
 
 Report the outcome, important decisions, changed contracts, migrations,
 compatibility behavior, unit-code coverage, integration-boundary coverage,
 critical-journey coverage, BDD traceability, verification commands and results,
-review findings, and unresolved risk. Identify any permitted legacy-coverage
-exception and link its recorded refactoring work.
+review findings, unmet gates, and unresolved risk. Identify every permitted
+exception and link its required record.
+
+Completion criterion: every applicable loaded-reference gate has explicit
+passing evidence or is named as unmet; absence of evidence is never success.

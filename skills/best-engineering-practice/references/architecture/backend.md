@@ -3,7 +3,9 @@
 Apply these constraints to services, Web handlers, workers, scheduled jobs,
 CLI processes, persistence, messaging, and external integrations. The Core is
 authoritative; this reference defines backend ownership and dependency rules
-without replacing its failure, observability, testing, or compatibility gates.
+without replacing its failure, observability, or compatibility gates. The
+backend verification profile owns inventories, executable proof, architecture
+enforcement, and backend quality gates.
 
 Express the architecture through the language and framework's native mechanisms.
 Preserve the dependency direction and responsibilities below; do not imitate a
@@ -24,8 +26,6 @@ particular directory tree, class diagram, or dependency-injection syntax.
 - [Model Queues And Long-Running Work Explicitly](#model-queues-and-long-running-work-explicitly)
 - [Separate Domain Events From Integration Events](#separate-domain-events-from-integration-events)
 - [Own The Complete Service Lifecycle](#own-the-complete-service-lifecycle)
-- [Verify Observability As Behavior](#verify-observability-as-behavior)
-- [Enforce Architecture Mechanically](#enforce-architecture-mechanically)
 - [Apply The Backend Completion Gate](#apply-the-backend-completion-gate)
 
 ## Use Clean Architecture For Dependency Direction
@@ -231,7 +231,7 @@ adapter error type or parse an adapter message.
 
 Delete a declared error category that no adapter can produce or no consumer can
 handle. Keep the taxonomy finite and verify production plus handling coverage
-through the testing reference.
+through the backend verification profile.
 
 ## Keep Caching Semantically Transparent
 
@@ -315,47 +315,6 @@ For an optional dependency, define at design time whether its absence prevents
 readiness, fails only the affected operation, or enables an explicit degraded
 product mode. Do not discover that policy through an accidental catch block.
 
-## Verify Observability As Behavior
-
-Integration-test the observability contract instead of assuming middleware and
-instrumentation are wired correctly. Prove that:
-
-- exactly one structured completion log represents each request or task attempt;
-- a long-running task has one additional start event only when its declared
-  observability profile requires that progress signal;
-- synchronous and asynchronous work retain their correlation or Trace link;
-- incoming Trace context is extracted when the protocol supplies it, a new root
-  Trace is created for scheduled or parentless execution, and context is
-  injected when the boundary invokes a traced downstream dependency;
-- stable log fields carry route or task identity, outcome, duration, principal
-  context where allowed, and error classification;
-- ordinary logs omit secrets, credentials, and bodies;
-- unexpected failures retain cause and stack at the execution boundary.
-
-Assert stable structured fields and propagation behavior, not prose wording,
-timestamps, or incidental formatting. Keep audit-event verification separate
-from diagnostic logging while proving that both share the required identity
-and Trace context.
-
-## Enforce Architecture Mechanically
-
-Encode the inward dependency rules in CI using the strongest native mechanism
-available: compiler/package visibility, module boundaries, import rules,
-dependency graph analysis, static analysis, or a combination.
-
-At minimum, fail the build when:
-
-- Domain imports Transport, Infrastructure, framework, ORM, or vendor modules;
-- Application imports a concrete adapter or transport;
-- a Transport imports adapter-specific errors or datastore types;
-- an adapter leaks ORM, SDK, or wire types through an inward Port;
-- composition or container lookup occurs outside the Composition Root;
-- dependency cycles cross business-module boundaries.
-
-Do not rely on code review or a documented directory diagram as the only
-enforcement. A generic reference fixes roles and direction; a stack-specific
-reference may fix exact directories and tool configuration.
-
 ## Apply The Backend Completion Gate
 
 Reject completion when any of the following is true:
@@ -375,5 +334,4 @@ Reject completion when any of the following is true:
   explicit consistency design;
 - Domain and Integration Events are coupled as one wire-shaped type;
 - startup, readiness, draining, or shutdown ownership is undefined;
-- observability propagation and redaction lack integration proof;
-- dependency direction is documented but not mechanically enforced.
+- an applicable backend verification or common quality gate remains unmet.

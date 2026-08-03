@@ -13,8 +13,7 @@ error model onto another.
 - [Make Simplicity A Design Constraint](#make-simplicity-a-design-constraint)
 - [Define Public Modules For Consumers](#define-public-modules-for-consumers)
 - [Keep Dependencies And State Explicit](#keep-dependencies-and-state-explicit)
-- [Prove Behavior With Tests](#prove-behavior-with-tests)
-- [Enforce Coverage And Quality Gates](#enforce-coverage-and-quality-gates)
+- [Require Executable Proof](#require-executable-proof)
 - [Diagnose Before Fixing](#diagnose-before-fixing)
 - [Version Compatibility Deliberately](#version-compatibility-deliberately)
 - [Protect Security Data And Runtime Boundaries](#protect-security-data-and-runtime-boundaries)
@@ -25,9 +24,15 @@ error model onto another.
 
 ## Apply The Rules By Authority
 
-Treat explicit user requirements and supported public contracts as the task's
-authority. Apply documented repository conventions when they do not conflict
-with this Core.
+Treat the explicit user outcome and scope plus supported public contracts as the
+task authority. Invoking this skill makes the Core authoritative within that
+scope. A requested mechanism, repository convention, or existing pattern does
+not implicitly waive a Core rule.
+
+A later user instruction may authorize a deviation only by naming the Core rule
+and accepting the resulting unmet gate. The deviation never becomes compliant
+completion. Secret exposure and falsified verification evidence are never
+authorizable.
 
 Treat the following as non-negotiable:
 
@@ -238,80 +243,22 @@ clear ownership and dependency direction instead:
 - Evaluate maintenance, stability, license, security history, and transitive
   dependency risk before adding a library.
 
-## Prove Behavior With Tests
+## Require Executable Proof
 
-- Test every public module implementation, including normal behavior, meaningful
-  error semantics, and critical invariants.
-- Test behavior through the public interface. Do not test private methods,
-  collaborator call order, or internal structure unless call behavior is itself
-  the contract.
-- Choose expected results from a specification, worked example, or independent
-  source of truth. Do not reproduce the implementation algorithm in the test.
-- Use the contract owner's standard mock or fake when testing a consuming
-  business module.
-- Test database, cache, queue, and other infrastructure implementations against
-  a real local instance or faithful substitute that exercises their semantics.
-- Test third-party adapters with a protocol-level fake or mock server.
-- Write a red-capable regression test before fixing a bug, then rerun both the
-  regression and the original reproduction.
-- Prefer test-first work when an interface and behavior are established.
-- Allow a throwaway prototype when the work exists to discover an interface or
-  behavior. Replace it with tested production code after the decision.
-- Never implement a horizontal batch and add tests only at the end to chase a
-  coverage number.
+Map every changed observable behavior to executable proof at the cheapest layer
+that proves it completely. Prove real transports, persistence, external
+Adapters, Consumers, migrations, browser boundaries, and cross-stack journeys
+through their actual semantics rather than line coverage or internal mocks.
 
-## Enforce Coverage And Quality Gates
-
-Require at least 90% statement coverage for production logic whose behavior is
-owned by unit tests, measured per production package or module. When the
-ecosystem cannot report statement coverage, use its closest production-code
-equivalent, normally line coverage, without lowering the 90% threshold. Exclude
-generated code and generated mocks from the calculation. Do not let a high
-repository average hide a weak package.
-
-Do not grade real transports, persistence Adapters, external-system Adapters,
-queue Consumers, or migration paths only by line coverage. Grade those seams by
-the 100% integration-boundary inventory and required behavior profiles in the
-testing reference. Grade critical cross-stack journeys and BDD specifications
-by their own 100% mappings. These gates complement unit coverage; none can be
-used to waive another layer's owned behavior.
-
-If the repository lacks package-level or changed-code measurement, add and
-configure the ecosystem's appropriate coverage tooling as part of the change.
-When the ecosystem genuinely cannot produce either measure, report the missing
-measurement and leave the coverage gate unmet; do not substitute a repository
-average or an estimate.
-
-For every change:
-
-- require at least 90% unit-test coverage of added and modified production
-  logic assigned to the unit layer, without exception;
-- raise every touched unit-tested production package to at least 90%;
-- map every added or modified integration boundary, BDD scenario, and critical
-  journey to its required proof under the testing reference;
-- delegate legacy test completion to a Sub-agent when that protects the main
-  task's context;
-- require the main Agent to review the added tests and rerun the full package
-  test and coverage commands.
-
-Permit a touched unit-tested package to remain below 90% only when its
-pre-existing legacy code cannot be tested adequately without a large
-production-architecture refactor. This exception never applies to added or
-modified unit-owned logic, and never weakens an integration, BDD, or E2E mapping
-gate. Require all of the following:
-
-- do not reduce package coverage;
-- test all current-task behavior and meet 90% changed unit-code coverage;
-- record the current coverage, uncovered behavior, architectural cause,
-  refactoring direction, and risk;
-- create work in the project's issue tracker, or its established Markdown debt
-  file when no tracker exists;
-- disclose the exception in the completion report.
+Apply every verification reference selected by `SKILL.md`. Treat its inventory,
+coverage, native-report, exception, architecture, browser, and CI requirements
+as independent blocking gates. A mapping, source declaration, coverage estimate,
+or prose review is never a substitute for an executable passing native report.
 
 Run every configured formatter, compiler, type checker, static analyzer, test,
-coverage gate, contract validator, generator check, and build. Fix the code or
-an actually incorrect rule. Never skip a check, suppress a valid finding, lower
-a threshold, or edit configuration merely to make the pipeline green.
+coverage gate, contract validator, generator check, architecture gate, and build.
+Fix the code or an actually incorrect rule. Never skip a check, suppress a valid
+finding, lower a threshold, or edit configuration merely to manufacture success.
 
 ## Diagnose Before Fixing
 
@@ -416,8 +363,13 @@ every temporary feature flag an owner, observation plan, and deletion condition.
   history by superseding an ADR instead of rewriting the old decision.
 - Avoid documentation that merely restates code or will immediately drift.
 
-Before completing a non-mechanical change, run two independent reviews with
-fresh reviewer or Sub-agent context:
+A change is mechanical only when it cannot alter compiled behavior, runtime
+behavior, stored data, generated contracts, public output, dependency
+resolution, or execution order. Everything else is non-mechanical.
+
+Before completing a non-mechanical change, run two independent reviews in
+distinct reviewer or Sub-agent contexts isolated from the implementation
+reasoning and from each other's initial findings:
 
 1. **Outcome review:** compare the diff with the requirement and supported
    contracts; find omissions, wrong behavior, and scope creep.
@@ -445,7 +397,8 @@ pattern:
 1. stop adding new instances;
 2. define the one correct replacement pattern;
 3. keep the main Agent on the requested feature;
-4. delegate repository-wide migration to Sub-agents when useful;
+4. delegate repository-wide migration when independent workers are available,
+   otherwise complete it in the main context;
 5. review all delegated changes and run affected repository gates;
 6. complete with one consistent pattern.
 
@@ -465,12 +418,8 @@ Reject completion when any of the following is true:
 - a substitutable cross-module capability lacks its canonical contract,
   production implementation, contract-owner-provided mock or fake, or
   behavioral tests;
-- added or modified unit-owned production logic is below 90% coverage;
-- a touched unit-tested package is below 90% without the permitted recorded
-  legacy exception;
-- an applicable integration boundary, BDD scenario, stable error category, or
-  critical journey lacks its required mapped proof;
-- a configured quality gate was skipped, weakened, or suppressed;
+- an applicable loaded verification or configured repository gate remains
+  unmet, skipped, weakened, or suppressed;
 - business rules or mutable state have multiple owners;
 - a concurrency task lacks a lifecycle or an external call lacks a time budget;
 - a supported contract breaks outside its version and migration policy;

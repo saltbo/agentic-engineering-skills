@@ -2,8 +2,10 @@
 
 Apply this reference to browser UI, client state, frontend routing, rendering,
 styling, accessibility, browser security, frontend observability, or client
-performance. Apply `core.md`, `web.md`, and `testing.md` first. This reference
-defines frontend ownership and proof without copying backend Clean Architecture.
+performance. The Core is authoritative; this reference defines frontend runtime
+ownership without copying backend Clean Architecture. The frontend verification
+profile owns inventories, proof layers, coverage, browser gates, and mechanical
+enforcement.
 
 ## Contents
 
@@ -23,7 +25,6 @@ defines frontend ownership and proof without copying backend Clean Architecture.
 - [Observe The Browser At Boundaries](#observe-the-browser-at-boundaries)
 - [Choose Rendering And Compatibility Deliberately](#choose-rendering-and-compatibility-deliberately)
 - [Enforce Performance And Visual Quality](#enforce-performance-and-visual-quality)
-- [Prove Frontend Behavior Mechanically](#prove-frontend-behavior-mechanically)
 - [Apply The Frontend Completion Gate](#apply-the-frontend-completion-gate)
 
 ## Organize By Business Capability
@@ -411,46 +412,6 @@ changed responsive UI in real browsers at representative narrow and wide
 viewports. Visual proof complements behavior and accessibility tests; it does
 not replace them.
 
-## Prove Frontend Behavior Mechanically
-
-Apply the general testing taxonomy and thresholds. In addition:
-
-- colocate Unit and component behavior tests with their feature source;
-- keep cross-boundary Integration, browser visual, and E2E suites in explicit
-  suite directories; when the directory classifies the layer, do not repeat the
-  layer in the filename;
-- test features through accessible roles, names, content, navigation, and user
-  events; do not mock internal hooks, child components, private state, or the
-  typed API client;
-- replace only real boundaries such as the protocol server, clock, browser
-  storage, or observer API with a protocol-faithful Fake;
-- use snapshots only for small stable reviewed structures;
-- reserve E2E for declared critical cross-stack journeys.
-
-Generate frontend behavior inventory from the production router and feature
-operation registry, and prove every route-to-operation binding. Derive query,
-command, access, validation, conflict, freshness, destructive, optimistic,
-offline, and other applicable profiles from the production declarations and
-linked server contract; do not maintain a parallel test checklist.
-
-Require 100% of the generated `(frontend item, applicable profile)` pairs in an
-executable passing canonical Unit proof. Keep the Unit production-code threshold
-at 90% per module and for changed code; behavior inventory is an additional
-denominator, not a replacement. Frontend inventory has no manual entries or
-profile exceptions: correct the production capability metadata. The testing
-reference owns the exact inventory and native-report rules.
-
-Put every constraint with a reliable static detector into blocking CI. This
-includes feature public imports, dependency direction, direct
-network/config/storage access, ad-hoc console use, dangerous HTML and dynamic
-execution, focused or skipped tests, inventory completeness, accessibility,
-supported-browser tests, performance budgets, and required visual baselines.
-Maintain positive and bypass-oriented negative fixtures for custom rules. Do
-not claim that a name-based syntax scan proves aliases, computed access,
-framework object construction, or data flow that it does not analyze; combine
-the supplied minimum checks with the repository's type-aware linter and
-security tooling where those forms are possible.
-
 ## Apply The Frontend Completion Gate
 
 Reject completion when any applicable condition is true:
@@ -471,8 +432,4 @@ Reject completion when any applicable condition is true:
   product semantics and tests;
 - raw HTML, dynamic execution, persistent Tokens, durable browser data, or a
   third-party script bypasses its trust and version boundary;
-- accessibility, browser support, performance, responsive layout, or visual
-  behavior lacks its applicable blocking evidence;
-- Unit production coverage is below 90% or frontend behavior inventory is below
-  100%;
-- a static rule exists only in prose when CI can enforce it.
+- an applicable frontend verification or common quality gate remains unmet.
