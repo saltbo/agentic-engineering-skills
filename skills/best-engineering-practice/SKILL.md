@@ -1,147 +1,105 @@
 ---
 name: best-engineering-practice
-description: Enforce technology-independent and Web-specific engineering constraints while planning, implementing, debugging, refactoring, testing, or reviewing software. Use for frontend applications, backend services, full-stack features, shared modules, tests, architecture, compatibility, or delivery work that requires explicit error handling, unified boundary observability, simple domain-oriented design, owned ports and test doubles, Clean Architecture dependency direction, layered testing, measurable coverage, reproducible verification, versioned compatibility, and independent outcome and engineering review.
+description: Apply cross-cutting engineering constraints while planning, implementing, debugging, refactoring, testing, or reviewing software. Use for frontend, backend, full-stack, shared-module, compatibility, migration, and delivery work that needs explicit failure handling, boundary observability, simple domain-oriented design, clear dependency ownership, proportional executable proof, and reproducible verification. Load runtime, HTTP, and verification references only when their stated boundaries are affected.
 ---
 
 # Best Engineering Practice
 
-Produce correct software through explicit failure, simple design, unified
-boundaries, and reproducible evidence. Apply repository conventions only when
-they satisfy the non-negotiable Core.
+Produce correct software through explicit failure, simple ownership, unified
+boundaries, and reproducible evidence. Apply repository conventions unless they
+conflict with the Core.
 
-## Load Guidance By Responsibility
+## Load Only Applicable References
 
 Read [references/core.md](references/core.md) for every task.
 
-Load architecture guidance for every affected runtime:
+Load architecture guidance only for affected runtimes:
 
 - Read [references/architecture/backend.md](references/architecture/backend.md)
   for services, handlers, workers, scheduled jobs, CLI processes, persistence,
-  messaging, or external integrations.
+  messaging, external integrations, or backend dependency direction.
 - Read [references/architecture/frontend.md](references/architecture/frontend.md)
-  for browser modules, UI, navigation, forms, design systems, client state or
-  persistence, accessibility, browser security, or client performance.
+  for browser modules, UI, navigation, forms, design systems, client state,
+  accessibility, browser security, or client performance.
 
-Read [references/protocols/http.md](references/protocols/http.md) whenever work
-or review affects an HTTP request lifecycle, browser-server interaction, Web
-API, HTTP cache, authentication transport, or other HTTP contract.
+Read [references/protocols/http.md](references/protocols/http.md) only when work
+affects an HTTP lifecycle, browser-server interaction, Web API, cache,
+authentication transport, upload, redirect, webhook, or HTTP middleware. Also
+use `$best-openapi-design` when designing or changing a REST/OpenAPI contract.
+Let that skill own resource modeling and the detailed REST profile.
 
-Load verification guidance whenever production behavior or its proof changes:
+Load verification guidance by the proof actually required:
 
 - Read [references/verification/testing.md](references/verification/testing.md)
-  for proof-layer selection, behavioral tests, deterministic execution,
-  contracts, BDD specifications, and E2E evidence.
+  when production behavior, tests, contracts, migrations, proof-layer choice,
+  or test infrastructure changes.
 - Read [references/verification/quality-gates.md](references/verification/quality-gates.md)
-  for coverage thresholds, proof identities, inventory integrity, native test
-  reports, exceptions, and blocking CI gates.
+  when work affects coverage policy, proof inventories, native reports,
+  exceptions, architecture enforcement, browser gates, or blocking CI policy.
 - Read [references/verification/backend.md](references/verification/backend.md)
-  when backend operations, repositories, adapters, consumers, migrations,
-  service lifecycle, observability, or dependency direction need proof.
+  when work affects HTTP or RPC operations, repositories, external adapters,
+  caches, queue consumers, migrations, authentication, authorization, service
+  lifecycle, execution-boundary observability, or backend dependency direction.
+  Load testing and quality gates first.
 - Read [references/verification/frontend.md](references/verification/frontend.md)
-  when frontend routes, transports, feature operations, browser behavior,
-  accessibility, performance, security, or visual quality need proof.
+  when work affects browser routes, typed transports, feature operations, forms,
+  navigation, browser state, accessibility, security, compatibility,
+  performance, responsive behavior, visual quality, or frontend dependency
+  direction. Load testing and quality gates first.
 
-Load both architecture profiles and both verification profiles for a vertical
-full-stack feature. When designing or changing a REST/OpenAPI contract, also use
-`$best-openapi-design` if it is available in the workspace.
+Do not load a runtime verification profile for an isolated pure-function,
+documentation, formatting, or mechanical change unless its boundary or gate is
+actually affected. For a vertical full-stack feature, load both architecture
+profiles, testing, HTTP when applicable, and only the runtime verification
+profiles required by the changed boundaries.
 
 ## Preserve The Requested Task Mode
 
-For a plan, explanation, diagnosis, inspection, or review, remain read-only.
-Evaluate the artifact and describe the required change, migration, tests, gates,
-and reviews. Return analysis only; implementation requires explicit change
-authorization.
+Remain read-only for a plan, explanation, diagnosis, inspection, or review.
+Describe required changes, migrations, tests, gates, and unresolved decisions.
 
 For an authorized build, implementation, fix, or refactor, execute the workflow
-below. Repository-wide internal correction of an encountered Core violation is
-part of that change authorization and does not require separate approval.
+below within the authorized scope. Inventory equivalent Core violations across
+the repository, but require explicit repository-wide migration authorization
+before mutating instances outside that scope.
 
-## Execute Authorized Changes In This Order
+## Execute Authorized Changes
 
-### 1. Establish The Outcome And Release Baseline
+### 1. Establish The Outcome And Baseline
 
 Read applicable instructions, affected code, tests, contracts, release history,
-and local conventions. State:
+and local conventions. Identify the observable outcome, consumers, supported
+release baseline, trust and data boundaries, and the references required by the
+loading rules above. Resolve hard-to-reverse ambiguity before changing an
+interface or data model.
 
-- the observable outcome and completion evidence;
-- the consumers and public interfaces involved;
-- whether the affected behavior is unreleased or part of a supported release;
-- the trust, data, concurrency, compatibility, and operational boundaries;
-- the architecture, protocol, and verification references loaded for the task.
+### 2. Design One Coherent Slice
 
-Resolve important ambiguity before fixing an interface or data model. Distinguish
-the required capability from any suggested mechanism.
+Choose the smallest vertical behavior slice. Put each rule in its owning domain
+module, keep dependencies and state explicit, and account for affected
+contracts, persisted data, concurrency, and compatibility. Define the structural
+signature of a corrected Core violation and search the complete repository for
+equivalent instances. Correct the authorized scope and report the remaining
+inventory; require a zero-match result only for an explicitly authorized
+repository-wide migration.
 
-Completion criterion: every affected boundary and applicable reference is
-identified, and every hard-to-reverse ambiguity is resolved.
+### 3. Implement With Proportional Proof
 
-### 2. Design The Smallest Coherent Change
+Keep behavior and proof together. For a bug, first create a red-capable
+regression. Use the cheapest test layer that proves the behavior completely and
+real integration semantics at actual boundaries. Run focused checks while
+working, then every configured gate applicable to the changed scope. Never skip
+or weaken a gate to manufacture success.
 
-Choose one vertical behavior slice at a time. Put behavior in the module that
-owns the domain rule. Prefer direct data flow, explicit dependencies, immutable
-values, small public interfaces, and deep implementations.
+### 4. Review And Report
 
-When logic becomes convoluted, inspect the data model and responsibility split.
-Restructure the root cause instead of adding conditionals, fallbacks, or
-defensive patches.
-
-After identifying a Core violation or competing pattern in affected code,
-define its structural signature, search the complete repository for equivalent
-instances, and record every match in a migration inventory. Keep the main task
-on its primary path. Delegate the migration when independent workers are
-available; otherwise complete it in the main context. Finish with one pattern
-and a final repository-wide search that finds no remaining match. Preserve
-released behavior and apply the version and data-migration rules.
-
-Completion criterion: the proposed slice owns one observable behavior, every
-affected contract and migration is accounted for, and the migration inventory
-has a defined zero-match condition.
-
-### 3. Implement And Verify One Slice
-
-Keep behavior and its proof together. For a bug, write a red-capable regression
-test before the fix. For an established interface, prefer test-first work. Use
-a throwaway prototype only to discover an uncertain interface or behavior.
-
-Provide a canonical contract, production implementation, and mock or fake for
-every substitutable cross-module capability consumed by business code. The
-capability normally owns its contract. For an outward Port, the inner business
-caller owns the contract and test double while the outer Adapter provides the
-production implementation. Test exported pure functions, immutable values, and
-UI components directly; do not manufacture interfaces or fakes for them.
-
-Run focused checks continuously. Maintain BDD traceability when observable
-product behavior changes. Meet every loaded verification profile, then run
-every configured formatter, build, type, static-analysis, test, coverage,
-contract, generation, and architecture gate. Never weaken or skip a gate to
-manufacture success.
-
-Completion criterion: every changed behavior has mapped executable proof, every
-loaded verification gate passes, and the migration inventory is empty.
-
-### 4. Review Independently
-
-Review non-mechanical changes in two distinct contexts isolated from the
-implementation reasoning and from each other's initial findings:
-
-1. **Outcome:** Verify the requested behavior, scope, and supported contracts.
-2. **Engineering:** Verify errors, observability, tests, coverage, module
-   ownership, dependencies, compatibility, security, and operability.
-
-Verify and fix both sets of findings, then rerun affected gates. When distinct
-independent contexts are unavailable, run the axes separately, report the
-missing independence, and leave the independent-review gate unmet.
-
-Completion criterion: both reviews are recorded, every finding is resolved or
-reported as unresolved, and every affected gate has been rerun.
-
-### 5. Report Evidence
+Classify the change risk using the Core. Review the outcome against the request
+and supported contracts, then review the engineering against the loaded
+references and repository standards with risk-appropriate reviewer independence.
+Verify findings, classify their severity and scope, resolve in-scope blocking
+findings, and rerun affected checks.
 
 Report the outcome, important decisions, changed contracts, migrations,
-compatibility behavior, unit-code coverage, integration-boundary coverage,
-critical-journey coverage, BDD traceability, verification commands and results,
-review findings, unmet gates, and unresolved risk. Identify every permitted
-exception and link its required record.
-
-Completion criterion: every applicable loaded-reference gate has explicit
-passing evidence or is named as unmet; absence of evidence is never success.
+compatibility behavior, verification commands and results, finding severity and
+scope, unmet gates, and unresolved or accepted risk. Do not claim success
+without evidence.

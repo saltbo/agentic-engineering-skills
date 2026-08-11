@@ -1,435 +1,232 @@
-# Technology-Independent Engineering Constraints
+# Technology-Independent Engineering Core
 
-Enforce these constraints across languages and frameworks. Express them through
-the target platform's native mechanisms; do not force one language's syntax or
-error model onto another.
+Apply these constraints to every task using this skill. Runtime, protocol, and
+verification references add specialist rules without replacing this Core.
 
 ## Contents
 
-- [Apply The Rules By Authority](#apply-the-rules-by-authority)
 - [Start From Observable Behavior](#start-from-observable-behavior)
 - [Handle Failure Explicitly](#handle-failure-explicitly)
-- [Unify Observability At Execution Boundaries](#unify-observability-at-execution-boundaries)
-- [Make Simplicity A Design Constraint](#make-simplicity-a-design-constraint)
-- [Define Public Modules For Consumers](#define-public-modules-for-consumers)
-- [Keep Dependencies And State Explicit](#keep-dependencies-and-state-explicit)
-- [Require Executable Proof](#require-executable-proof)
-- [Diagnose Before Fixing](#diagnose-before-fixing)
-- [Version Compatibility Deliberately](#version-compatibility-deliberately)
-- [Protect Security Data And Runtime Boundaries](#protect-security-data-and-runtime-boundaries)
-- [Record And Review Decisions](#record-and-review-decisions)
-- [Complete Repository-Wide Corrections](#complete-repository-wide-corrections)
+- [Observe Execution Boundaries](#observe-execution-boundaries)
+- [Keep Design And Ownership Simple](#keep-design-and-ownership-simple)
+- [Keep Dependencies State And Lifecycles Explicit](#keep-dependencies-state-and-lifecycles-explicit)
+- [Protect Compatibility And Security](#protect-compatibility-and-security)
+- [Deliver Reproducibly](#deliver-reproducibly)
+- [Prove And Diagnose Behavior](#prove-and-diagnose-behavior)
+- [Review The Changed Scope](#review-the-changed-scope)
 - [Apply The Completion Gate](#apply-the-completion-gate)
-- [Influence](#influence)
-
-## Apply The Rules By Authority
-
-Treat the explicit user outcome and scope plus supported public contracts as the
-task authority. Invoking this skill makes the Core authoritative within that
-scope. A requested mechanism, repository convention, or existing pattern does
-not implicitly waive a Core rule.
-
-A later user instruction may authorize a deviation only by naming the Core rule
-and accepting the resulting unmet gate. The deviation never becomes compliant
-completion. Secret exposure and falsified verification evidence are never
-authorizable.
-
-Treat the following as non-negotiable:
-
-- surface every failure explicitly;
-- never swallow, downgrade, or disguise an error as success;
-- never invent an unrequested fallback or defensive path;
-- keep diagnostic logging at execution boundaries;
-- keep dependencies, state ownership, and concurrency lifecycles explicit;
-- prove changed behavior and meet the coverage and configured quality gates;
-- preserve the compatibility promise of supported releases;
-- never leak credentials or secrets;
-- do not copy an existing pattern that violates these rules.
-
-When a repository already contains a violating pattern, correct the pattern
-repository-wide. Do not preserve inconsistency merely to keep the current diff
-small.
-
-Solve the same problem through one project-wide pattern. Follow an existing
-Core-compliant pattern. When introducing a better replacement, migrate every
-instance instead of leaving multiple competing but individually valid patterns.
 
 ## Start From Observable Behavior
 
 - Define success in terms a user, caller, operator, or downstream system can
   observe.
-- Identify the command or evidence that proves completion before expanding the
-  implementation.
-- Read the originating requirement, existing behavior, contracts, and release
+- Read the requirement, current behavior, supported contracts, and release
   baseline before changing code.
-- Separate the required capability from a mechanism suggested in the request.
-- Clarify and record decisions before changing a hard-to-reverse interface or
-  data model. Keep documentation proportional for simple reversible work.
-- Work in vertical slices: one behavior, its implementation, and its proof.
-  Never build all types, then all handlers, then all tests as horizontal batches.
+- Separate the required capability from a mechanism suggested by the request.
+- Resolve hard-to-reverse interface and data-model ambiguity before implementation.
+- Work in vertical slices that keep one behavior, its implementation, and its
+  proof together.
+- Preserve the requested task mode. Analysis and review remain read-only unless
+  the user authorizes a change.
 
 ## Handle Failure Explicitly
 
 Classify predictable failures as errors and unexpected failures as exceptions
-or fatal invariant violations, using the platform's native model.
+or fatal invariant violations using the platform's native model.
 
-For errors:
+- Check returned failures where they occur and return when the current layer
+  cannot resolve them.
+- Preserve the original cause while adding useful operation context. Expose
+  stable types or codes for programmatic decisions; never parse error text.
+- Keep domain errors independent from HTTP, storage, SDK, or provider types.
+  Translate them only at the owning boundary.
+- Retry only transient failures at the boundary that owns the complete
+  operation. Require idempotency, finite attempts, backoff, jitter, and a total
+  deadline.
+- Recover unexpected failures only at a request, task, process, or declared UI
+  execution boundary. Do not convert corrupted or unknown state into success.
+- Add fallback or degraded behavior only when it is an explicit product or
+  architecture capability with semantics, observability, tests, and recovery.
+- Validate untrusted input at real system boundaries. Do not scatter redundant
+  internal checks for states that established invariants exclude.
 
-- check every returned failure at the call site;
-- return immediately when the current layer cannot resolve it;
-- preserve the original cause while adding only useful operation context;
-- expose a stable type, code, or error chain for programmatic decisions;
-- never parse error text to choose control flow, protocol status, or retry;
-- keep domain error meaning independent from HTTP or another transport;
-- translate domain errors into protocol responses only at the transport boundary.
+## Observe Execution Boundaries
 
-For retries:
+- Emit one structured completion event at each request, job, consumer, process,
+  or independently recoverable UI execution boundary.
+- Record stable operation identity, result, duration, correlation or Trace
+  context, and safe error classification. Never log credentials or bodies by
+  default.
+- Return failures through internal layers and log once at the execution
+  boundary instead of logging the same error repeatedly.
+- Use low-cardinality Metrics for aggregation, Traces for causal flow, Logs for
+  execution context, and audit events for security-sensitive or regulated
+  operations.
+- Propagate cancellation, deadlines, and Trace context through synchronous and
+  asynchronous work.
 
-- mark only transient failures as retryable;
-- never retry validation, authorization, deterministic conflict, or programming
-  failures;
-- retry only at the boundary that owns the full operation semantics;
-- require idempotency, a finite attempt limit, backoff, jitter, and an overall
-  deadline;
-- return classification from internal modules instead of retrying there.
+## Keep Design And Ownership Simple
 
-For unexpected failures:
+- Choose the simplest design that satisfies the current requirement. Inspect
+  the data model and responsibility split before adding conditionals, helpers,
+  layers, or fallback branches.
+- Give each business rule and mutable state one owner. Organize by stable domain
+  capability rather than controller, datastore, screen, or generic utility
+  categories.
+- Prefer small public interfaces with cohesive implementations. Delete
+  forwarding layers, dead code, obsolete branches, and abstractions without a
+  real boundary.
+- For a substitutable capability consumed by business code, keep one canonical
+  contract, production implementation, and contract-owner-provided test double.
+  Let an inner caller own each outward Port it requires.
+- Keep protocol parsing at transport boundaries, business rules in their domain
+  modules, and provider or persistence details in outer implementations.
+- Prefer clear names and data flow over comments and clever expressions.
 
-- recover only at a request, job, process, or declared UI execution boundary;
-- in a browser, scope recovery to the application, navigation, independently
-  recoverable render subtree, or event boundary that owns the failed work;
-- capture the complete cause, stack, and trace context;
-- fail the current execution instead of converting the exception into a normal
-  internal error;
-- terminate or rethrow when shared state, data consistency, or process
-  invariants may be damaged.
-
-Allow a fallback, failover, or degraded mode only when it is an explicit product
-or architecture behavior with defined semantics, tests, observability, and a
-recovery condition. Otherwise fail immediately.
-
-Validate untrusted input at real system boundaries. Inside a trusted boundary,
-rely on established invariants. Do not add redundant null checks, catch blocks,
-defaults, recovery, or branches to make impossible state appear valid.
-
-## Unify Observability At Execution Boundaries
-
-Use structured logs with stable field names. Do not depend on prose messages for
-querying, aggregation, or alerting.
-
-For synchronous requests:
-
-- record the access event once in framework-level request middleware;
-- record method, route template, status, duration, sizes, principal context,
-  authentication method, request or trace identifiers, and error classification
-  when available;
-- record useful allowlisted headers or derived attributes, never credentials;
-- do not record request or response bodies by default;
-- allow body logging at Debug level according to project policy.
-
-For asynchronous work:
-
-- keep all permanent logging in the task execution entry boundary;
-- emit one structured completion event per attempt with result or failure and
-  duration;
-- emit a distinct start event only when long-running work needs an operational
-  progress signal, and make that event an explicit tested part of the task's
-  observability contract;
-- propagate the originating Request ID or Trace ID when one exists;
-- start a new root trace for scheduled work;
-- allow sparse Debug diagnostics at meaningful internal positions, disabled by
-  default;
-- never scatter permanent INFO or ERROR statements through business modules.
-
-Do not log an error at each layer. Return it to the execution boundary and log
-it once with the full error chain and execution context.
-
-Separate telemetry responsibilities:
-
-- use low-cardinality Metrics for aggregation, trends, SLOs, and actionable
-  alerts; never label Metrics with request, user, or resource identifiers;
-- use Traces for causal flow across modules, dependencies, and asynchronous work;
-- use Logs for structured execution context;
-- alert on user-visible failure, SLO breach, or saturation rather than the mere
-  existence of one error log.
-
-Generate common audit events in centralized middleware from canonical resource
-operations. Audit all resource writes and every successful or failed
-security-sensitive operation. Audit ordinary reads only for sensitive resources
-or compliance requirements. Record actor, resource identity, operation, result,
-time, Trace ID, and changed field names without copying full bodies. Emit an
-explicit business audit event only when middleware cannot derive it, and route
-it through the same audit schema and sink.
-
-## Make Simplicity A Design Constraint
-
-- Choose the simplest design that satisfies the current requirement.
-- Prefer readable control flow over clever expressions and compressed one-liners.
-- Step back when logic becomes convoluted. Inspect the data structure, domain
-  model, and responsibility split before adding another conditional or helper.
-- Restructure an incorrect or outdated internal data model without hesitation
-  when it removes root complexity. Preserve released behavior and migrate
-  persisted data safely.
-- Prefer a small public interface with a cohesive, deep implementation.
-- Treat a responsibility as one complete, nameable reason to change, not one
-  line or one call. Do not split functions or files to satisfy a size metric.
-- Organize modules by domain or business capability. Keep technical details
-  inside their owning domain module when practical.
-- Reject vague `common`, `utils`, or `helpers` containers. Every shared module
-  must own a stable, nameable capability.
-- Permit short-lived surface duplication when similar code has different
-  meaning. Centralize the rule when duplicated code represents one business
-  concept that must change together.
-- Name functions, variables, types, tests, logs, and documents with the same
-  precise domain vocabulary. Rename aggressively when understanding improves.
-- Use comments to preserve why a surprising choice exists, never to narrate
-  obvious code.
-- Delete dead code, obsolete branches, unused parameters, vestigial abstractions,
-  and replaced implementations. Do not polish what should not exist.
-
-## Define Public Modules For Consumers
-
-For every substitutable cross-module capability consumed by business code,
-provide together:
-
-1. one cohesive canonical contract;
-2. the production implementation;
-3. a contract-owner-provided mock or fake capability.
-
-The capability normally owns its public contract and test double. Dependency
-inversion changes that ownership: an inner business module owns the outward
-Port it needs and its test double, while an outer Adapter provides the
-production implementation. Do not let an infrastructure provider dictate an
-inner business contract.
-
-Keep callers on the canonical contract. If callers repeatedly need only
-unrelated subsets, split the owning module and its contract instead of creating
-competing caller-local views. A deliberately narrow outward Port is not such a
-duplicate; it is the inner caller's owned business requirement.
-
-Keep internal implementation types concrete. Test exported pure functions,
-immutable values, declarative UI components, and other directly executable
-values without manufacturing an interface or fake. Introduce another interface
-when the implementation is a substitutable cross-module capability or a real
-external seam, not merely because it is exported.
-
-Do not prescribe a fixed Controller-Service-Repository layer count. Enforce
-clear ownership and dependency direction instead:
-
-- keep protocol parsing and response mapping at the transport boundary;
-- keep business rules in their owning domain module;
-- keep persistence and external-system details in infrastructure implementations;
-- keep domain rules independent from Web-framework and datastore details;
-- delete layers whose only behavior is forwarding the same parameters and result.
-
-## Keep Dependencies And State Explicit
+## Keep Dependencies State And Lifecycles Explicit
 
 - Pass databases, clients, clocks, configuration, and other dependencies through
-  constructors or explicit parameters. Never hide them in mutable global state.
-- Permit immutable constants and genuinely stateless shared objects.
-- Prefer immutable values and explicit data flow. When mutation is necessary,
-  assign one owner and keep its scope small and visible.
-- Read and validate configuration once at process startup. Convert it to typed,
-  immutable values and inject it. Fail startup for missing or invalid required
-  configuration. Never scatter environment reads through business code.
-- Prefer the standard library when it provides a reliable solution.
-- Use mature community libraries for standards, protocols, cryptography,
-  authentication, established algorithms, and pervasive language boilerplate.
-  Do not reimplement OAuth, OIDC, cryptography, or similar standards.
-- Keep simple stable domain logic local. Do not add a micro-dependency for a few
-  trivial operations.
-- Use a mature ecosystem utility library instead of growing an internal utility
-  package that duplicates it.
-- Evaluate maintenance, stability, license, security history, and transitive
-  dependency risk before adding a library.
+  constructors or explicit parameters. Avoid mutable global state.
+- Prefer immutable values. When mutation is required, make its owner, scope,
+  synchronization, and lifetime visible.
+- Read and validate configuration once at startup, convert it to typed immutable
+  values, and fail startup for missing required configuration.
+- Give every external call a timeout or deadline derived from the operation
+  budget.
+- Give every thread, coroutine, goroutine, or asynchronous task an owner,
+  concurrency bound, cancellation path, error propagation, and cleanup or join
+  behavior. Do not create fire-and-forget work.
+- Enforce critical data invariants in one authoritative place with transactions,
+  atomic operations, and datastore constraints where appropriate.
+- Prefer the standard library for reliable simple work and mature libraries for
+  standards, protocols, authentication, cryptography, and established algorithms.
 
-## Require Executable Proof
+## Protect Compatibility And Security
 
-Map every changed observable behavior to executable proof at the cheapest layer
-that proves it completely. Prove real transports, persistence, external
-Adapters, Consumers, migrations, browser boundaries, and cross-stack journeys
-through their actual semantics rather than line coverage or internal mocks.
+- Compare compatibility against published versions still covered by a support
+  promise, not an earlier state of unreleased work.
+- Improve unreleased contracts directly and update their current callers. For a
+  supported contract, use its version and migration policy.
+- Give temporary compatibility paths, feature flags, dual reads, and dual writes
+  an owner, supported range, observability, tests, and deletion condition.
+- Use an expand-migrate-switch-contract sequence for live data or rolling
+  deployment when required, and remove temporary branches after migration.
+- Authenticate at the execution boundary and produce a normalized principal.
+  Authorize separately against the resource, operation, ownership, tenant,
+  state, and requested fields.
+- Keep credentials, tokens, private keys, and secrets out of source, version
+  control, URLs, ordinary logs, caches, and error responses.
+- Use established implementations for OAuth, OIDC, cryptography, signatures,
+  and token formats.
 
-Apply every verification reference selected by `SKILL.md`. Treat its inventory,
-coverage, native-report, exception, architecture, browser, and CI requirements
-as independent blocking gates. A mapping, source declaration, coverage estimate,
-or prose review is never a substitute for an executable passing native report.
+## Deliver Reproducibly
 
-Run every configured formatter, compiler, type checker, static analyzer, test,
-coverage gate, contract validator, generator check, architecture gate, and build.
-Fix the code or an actually incorrect rule. Never skip a check, suppress a valid
-finding, lower a threshold, or edit configuration merely to manufacture success.
+- Lock dependency and critical tool versions. Make generation and builds
+  deterministic from a clean environment through declared commands shared by
+  local development and CI.
+- Keep generated artifacts with the source change when they form one logical
+  unit. Publish immutable tags and traceable build artifacts.
+- Use Conventional Commits for commits. Mark breaking changes explicitly and
+  keep each commit focused on one coherent reason for change.
+- Define a rollback or prepared roll-forward path before production release.
+- Give every temporary feature flag an owner, observation plan, and deletion
+  condition. Remove migration and compatibility branches when their supported
+  transition ends.
 
-## Diagnose Before Fixing
+## Prove And Diagnose Behavior
+
+- Map changed observable behavior to the cheapest executable proof that proves
+  it completely.
+- Use real semantics for transports, persistence, external adapters, consumers,
+  migrations, browser boundaries, and deployment contracts. Internal mocks do
+  not prove an external boundary.
+- Run every configured formatter, compiler, type checker, static analyzer, test,
+  contract validator, generator check, architecture gate, coverage gate, and
+  build applicable to the changed scope.
+- Require at least 90% coverage of added or modified production logic assigned
+  to the unit layer. Require complete proof for every affected integration
+  boundary profile and critical E2E journey. Use passing native reports rather
+  than estimates; load the quality-gate reference when its inventory, exception,
+  or CI protocol is needed.
+- Never skip a check, suppress a valid finding, or lower a threshold to create a
+  passing result.
 
 For a bug or regression:
 
-1. Build one fast, deterministic, agent-runnable command that detects the user's
-   exact symptom.
-2. Minimize the scenario until every remaining element is load-bearing.
-3. Generate three to five ranked, falsifiable hypotheses.
-4. Change one variable or add one targeted probe for each hypothesis.
-5. Convert the minimal reproduction into a failing test at the correct public
-   seam.
-6. Apply the smallest causal fix.
-7. Rerun the regression test and the original unminimized reproduction.
-8. Remove temporary instrumentation and record the actual cause.
+1. Create one fast deterministic reproduction of the exact symptom.
+2. Minimize it and rank falsifiable causes.
+3. Test one cause at a time with a targeted probe.
+4. Convert the reproduction into a failing test at the correct public seam.
+5. Apply the smallest causal fix and rerun both focused and original scenarios.
+6. Remove temporary instrumentation and report the actual cause.
 
-Measure a performance baseline with profiles, traces, query plans, or metrics
-before optimizing. Block structurally unbounded queries, concurrency, fan-out,
-memory growth, collection size, and per-item dependency calls without waiting
-for production damage.
+Measure a baseline before performance work. Treat unbounded queries, fan-out,
+concurrency, memory, collections, and per-item dependency calls as design defects.
 
-## Version Compatibility Deliberately
+## Review The Changed Scope
 
-Determine compatibility against every published version still covered by a
-support promise, not an earlier state of the current unreleased branch.
-
-For unreleased behavior:
-
-- make breaking design improvements directly;
-- update all current callers, tests, and documentation;
-- migrate existing development data to the new canonical form;
-- keep runtime code clean instead of retaining compatibility branches.
-
-For published and supported behavior:
-
-- apply Semantic Versioning to versioned software artifacts;
-- permit an explicitly defined protocol version system for APIs, events, and
-  other wire contracts;
-- preserve compatibility inside one supported version;
-- introduce a breaking contract only through the version system with consumer,
-  migration, coexistence, and recovery analysis.
-
-Give every compatibility path a supported version range, old and new behavior
-tests, usage telemetry, deprecation notice, removal condition, and owner. Delete
-it when the support window or breaking-version transition ends. Never leave a
-permanent fallback.
-
-For live data and rolling deployments, permit a temporary
-expand-migrate/backfill-switch-contract sequence. Make each stage observable,
-rerunnable where appropriate, and recoverable. Delete dual reads, dual writes,
-old fields, and old branches when migration completes.
-
-Use Conventional Commits for every commit. Mark breaking changes with `!` or a
-`BREAKING CHANGE` footer. Make every commit one coherent logical change and make
-its message explain why the change exists. Never mix unrelated behavior,
-refactoring, formatting, or generated output. Keep generated artifacts with the
-source change when they are part of that same logical change.
-
-Lock dependency and critical tool versions. Make code generation and builds
-deterministic from a clean environment through declared commands shared by
-local development and CI. Derive versions, changelogs, and release notes from
-the commit history when practical. Publish immutable tags and traceable build
-artifacts.
-
-Define a rollback or prepared roll-forward path before production release. Give
-every temporary feature flag an owner, observation plan, and deletion condition.
-
-## Protect Security Data And Runtime Boundaries
-
-- Authenticate at the execution boundary and produce a normalized immutable
-  principal. Authorize separately against the resource, operation, ownership,
-  tenant, state, and requested fields. Never let business code parse raw tokens
-  or claims.
-- Never put credentials, tokens, passwords, private keys, or secrets in source,
-  version control, URLs, ordinary logs, or error responses. Inject them through
-  the approved secret boundary with least privilege and rotation support. Treat
-  accidental exposure as a security incident.
-- Propagate cancellation, deadline, and Trace context through the complete
-  synchronous call chain. Never replace an active caller context with a detached
-  background context.
-- Move work that must outlive a request into an explicit asynchronous task with
-  its own lifecycle while preserving the correlation or Trace relationship.
-- Give every potentially blocking network, process, queue, or external call an
-  explicit timeout or deadline. Derive the budget from the operation objective
-  and remaining time, not an arbitrary infinite default.
-- Give every thread, coroutine, goroutine, or asynchronous task an owner,
-  cancellation path, error propagation, join or cleanup behavior, and concurrency
-  bound. Prohibit fire-and-forget work. Apply the platform's race detection when
-  shared state or concurrency changes.
-- Enforce critical data invariants in one authoritative place. Use transactions,
-  atomic operations, and datastore constraints for guarantees the datastore can
-  provide. Treat application prechecks as user-experience improvements, never as
-  substitutes for the final constraint.
-
-## Record And Review Decisions
-
-- Keep public contracts, operating procedures, and critical failure handling
-  documented alongside the system they govern.
-- Create an Architecture Decision Record only when the decision is hard to
-  reverse, surprising without context, and the result of a real trade-off.
-- Record context, the decision, alternatives, consequences, and status. Preserve
-  history by superseding an ADR instead of rewriting the old decision.
-- Avoid documentation that merely restates code or will immediately drift.
-
-A change is mechanical only when it cannot alter compiled behavior, runtime
-behavior, stored data, generated contracts, public output, dependency
-resolution, or execution order. Everything else is non-mechanical.
-
-Before completing a non-mechanical change, run two independent reviews in
-distinct reviewer or Sub-agent contexts isolated from the implementation
-reasoning and from each other's initial findings:
-
-1. **Outcome review:** compare the diff with the requirement and supported
-   contracts; find omissions, wrong behavior, and scope creep.
-2. **Engineering review:** enforce this Core and project standards; inspect
-   errors, observability, tests, coverage, ownership, dependencies,
-   compatibility, security, performance, and operability.
-
-Verify every finding against the code, fix valid findings, and rerun affected
-checks. Permit a mechanical rename, formatting-only change, or deterministic
-generation update to skip independent review when behavior cannot change.
-When independent reviewer capability is unavailable, do not silently omit the
-reviews or claim full compliance. Run the two review axes separately, report the
-missing independence, and leave the independent-review gate explicitly unmet.
-
-## Complete Repository-Wide Corrections
-
-For an authorized change task, keep the main workstream focused on its requested
-outcome, but do not preserve a known Core violation or competing project pattern
-for the sake of a small diff. For a read-only plan, diagnosis, or review, report
-the required repository-wide correction without mutating the repository.
-
-When authorized change work encounters an existing violating or competing
-pattern:
-
-1. stop adding new instances;
-2. define the one correct replacement pattern;
-3. keep the main Agent on the requested feature;
-4. delegate repository-wide migration when independent workers are available,
-   otherwise complete it in the main context;
-5. review all delegated changes and run affected repository gates;
-6. complete with one consistent pattern.
-
-Do not ask for authorization merely because this internal cleanup is broad,
-slow, or requires a better internal data model. Do not silently alter supported
-public behavior. Use the versioning and migration rules when correction crosses
-a published contract or persisted-data boundary.
+- Keep public contracts and critical operational behavior documented beside the
+  system they govern. Create an ADR only for a consequential, hard-to-reverse,
+  non-obvious trade-off.
+- Treat a change as mechanical only when it cannot alter compiled behavior,
+  runtime behavior, stored data, generated contracts, public output, dependency
+  resolution, or execution order.
+- Classify every non-mechanical change before review:
+  - **High risk:** affect a public or cross-service contract; authentication,
+    authorization, security, or privacy; money, billing, credit, or quota;
+    persisted data or migration; concurrency, transactions, or distributed
+    workflow; production delivery or rollback; or another hard-to-reverse
+    decision.
+  - **Low risk:** remain localized, reversible, and internal; affect no runtime
+    or external boundary; and meet none of the high-risk conditions.
+  - **Medium risk:** include every other non-mechanical change.
+- Review every non-mechanical change on two axes: **Outcome** against the request,
+  authorized scope, and supported contracts; **Engineering** against this Core,
+  loaded references, and repository standards.
+- Scale reviewer independence by risk:
+  - For low risk, run the axes as two separate self-review passes.
+  - For medium risk, prefer one reviewer context independent from implementation
+    to review both axes. When unavailable, run the axes as two separate
+    self-review passes and report the limitation.
+  - For high risk, use two independent reviewer contexts isolated from the
+    implementation reasoning and from each other's initial findings.
+- When high-risk independent reviewer capability is unavailable, run both axes
+  separately, report the limitation, and leave the independent-review gate
+  unmet.
+- Verify each finding against the artifact, then classify it on two independent
+  dimensions:
+  - **Severity:** `blocking` when the requested outcome is wrong or incomplete,
+    a supported contract breaks, security or data integrity is at risk, or an
+    applicable loaded or configured gate fails; otherwise `non-blocking`.
+  - **Scope:** `in-scope` when resolution is authorized by the current request;
+    otherwise `out-of-scope`.
+- Resolve in-scope blocking findings and rerun affected checks. For an
+  out-of-scope blocking finding, report the blocker and request direction without
+  expanding mutation authority. Report non-blocking findings and any explicitly
+  accepted risk without representing them as fixed.
+- When authorized implementation encounters a Core violation or competing
+  internal pattern, define its signature and search the complete repository.
+  Correct instances inside the authorized scope and report the remaining
+  inventory. Mutate every equivalent instance and require a zero-match result
+  only when the user explicitly authorizes repository-wide migration. Preserve
+  supported public behavior and apply versioning or data migration when a
+  correction crosses a published or persisted boundary.
 
 ## Apply The Completion Gate
 
-Reject completion when any of the following is true:
+Reject completion when any applicable condition holds:
 
-- the requested outcome lacks observable proof;
-- an error is swallowed, downgraded, logged repeatedly, or disguised as success;
+- the requested outcome lacks observable executable proof;
+- an error is swallowed, downgraded, repeatedly logged, or disguised as success;
 - an unrequested fallback or redundant internal defense exists;
-- diagnostic logs are scattered outside execution boundaries;
-- a substitutable cross-module capability lacks its canonical contract,
-  production implementation, contract-owner-provided mock or fake, or
-  behavioral tests;
-- an applicable loaded verification or configured repository gate remains
-  unmet, skipped, weakened, or suppressed;
-- business rules or mutable state have multiple owners;
-- a concurrency task lacks a lifecycle or an external call lacks a time budget;
-- a supported contract breaks outside its version and migration policy;
-- a temporary compatibility path, migration branch, or feature flag lacks an
-  exit condition;
-- secrets can enter source, logs, URLs, or ordinary errors;
-- outcome or engineering review has unresolved valid findings;
-- the repository contains both the corrected pattern and the known violating
-  pattern after the task;
-- the same problem remains implemented through competing project patterns.
+- business rules, mutable state, concurrent work, or external calls lack a clear
+  owner and lifecycle;
+- provider, storage, framework, or protocol details leak into business policy;
+- a supported contract or persisted-data transition lacks a versioned migration;
+- secrets can enter source, logs, URLs, caches, or ordinary errors;
+- an applicable loaded or configured gate is skipped, weakened, or unresolved;
+- a high-risk change lacks the required independent review;
+- outcome or engineering review has an unresolved blocking finding.
 
 ## Influence
 
@@ -437,4 +234,4 @@ The feedback-loop, vertical-slice, deep-module, seam, behavior-testing,
 diagnosis, and two-axis review ideas were adapted and reorganized from Matt
 Pocock's MIT-licensed [`skills`](https://github.com/mattpocock/skills)
 repository, copyright 2026 Matt Pocock. The enforcement model and combined
-constraints here reflect the preferences established for this skill.
+constraints reflect the preferences established for this skill.

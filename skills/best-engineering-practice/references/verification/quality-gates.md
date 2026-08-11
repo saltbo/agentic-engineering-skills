@@ -1,7 +1,8 @@
 # Verification Quality Gates
 
-Apply these gates whenever production behavior, tests, contracts, migrations,
-coverage policy, test infrastructure, or CI verification changes. These gates
+Apply these gates when work changes coverage policy, proof inventories, native
+reports, exceptions, architecture enforcement, browser gates, or blocking CI
+policy, and whenever a runtime verification profile is loaded. These gates
 define the proof protocol shared by every architecture and runtime profile.
 
 ## Contents
