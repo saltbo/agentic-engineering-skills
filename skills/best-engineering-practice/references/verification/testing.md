@@ -151,6 +151,11 @@ Write BDD scenarios in domain language and observable outcomes. Keep database
 tables, HTTP paths, CSS selectors, classes, mocks, and implementation steps out
 of product specifications.
 
+Every scenario in `specs/**/*.feature` must have unambiguous automated test
+coverage at the cheapest complete proof layer. Maintain a clear mapping from
+each scenario to its proving Unit, Integration, or E2E test. A Feature without
+executable proof is incomplete.
+
 Use the quality-gate reference for stable scenario identities, canonical proof
 layers, proof mappings, and traceability lint. Update the specification before
 new or changed user-visible behavior, then implement its cheapest complete
@@ -209,6 +214,7 @@ Reject completion when any of the following is true:
 - a required E2E journey uses retries, quarantine, skips, or cross-run residue;
 - BDD scenarios contain implementation details or changed behavior lacks its
   traceable specification;
+- a scenario in `specs/**/*.feature` lacks unambiguous automated test coverage;
 - snapshots or interaction assertions conceal the behavior under test;
 - failure cleanup removes required diagnostic evidence;
 - the loaded quality-gate or runtime verification profile remains unmet.

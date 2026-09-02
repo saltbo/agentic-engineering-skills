@@ -70,9 +70,9 @@ quality gate unmet; an Agent may not invent an unverifiable estimate.
 
 ## Trace Product Behavior Through BDD
 
-Use lightweight Gherkin `.feature` files as the source of truth for user-visible
-product behavior. Write scenarios in domain language and observable outcomes,
-without database tables, HTTP paths, CSS selectors, classes, mocks, or other
+Use lightweight `.feature` files as the source of truth for user-visible product
+behavior. Write scenarios in domain language and observable outcomes, without
+database tables, HTTP paths, CSS selectors, classes, mocks, or other
 implementation details.
 
 Every scenario has one unique stable ID and declares its cheapest canonical
@@ -84,8 +84,7 @@ same stable ID through the ecosystem proof adapter. The BDD lint gate proves:
 - no required scenario or proving test is skipped;
 - deleted or renamed scenarios leave no orphaned proof identity.
 
-Plain Unit, Integration, or E2E tests may prove scenarios. Add an executable
-Gherkin runner only when nontechnical stakeholders need to execute that form.
+Map each scenario to the Unit, Integration, or E2E tests that prove it.
 
 Update or add the scenario before implementing new or changed user-visible
 behavior. A behavior-preserving refactor, dependency update, performance-only

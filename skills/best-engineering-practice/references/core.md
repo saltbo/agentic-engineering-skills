@@ -28,6 +28,14 @@ verification references add specialist rules without replacing this Core.
   proof together.
 - Preserve the requested task mode. Analysis and review remain read-only unless
   the user authorizes a change.
+- For products, services, CLI tools, and other systems with behavior observable
+  by users, callers, operators, or downstream systems, maintain BDD
+  specifications as `specs/**/*.feature`. Pure libraries need not adopt BDD
+  solely to satisfy this profile.
+- Keep `specs/` limited to BDD Feature files. Let each file describe a
+  cohesive subject: extend it when new behavior belongs there, and create or
+  split files when distinct behavior would weaken its cohesion. Judge that
+  boundary from product semantics, not code layout or fixed size limits.
 
 ## Handle Failure Explicitly
 
@@ -166,8 +174,10 @@ concurrency, memory, collections, and per-item dependency calls as design defect
 ## Review The Changed Scope
 
 - Keep public contracts and critical operational behavior documented beside the
-  system they govern. Create an ADR only for a consequential, hard-to-reverse,
-  non-obvious trade-off.
+  system they govern. Record project architecture decisions worth preserving
+  for future engineering work under `docs/adr/`. Use judgment about their
+  continuing architectural relevance; do not exclude a decision merely because
+  it is reversible or include incidental implementation detail.
 - Treat a change as mechanical only when it cannot alter compiled behavior,
   runtime behavior, stored data, generated contracts, public output, dependency
   resolution, or execution order.
