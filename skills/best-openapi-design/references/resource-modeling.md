@@ -67,8 +67,9 @@ that the thing is a resource.
   and pagination controls in queries.
 - Require every filter to reference declared resource state or a proven
   projection. A query parameter must not hide an unmodeled business decision.
-- Keep the canonical URI free of API versions. Negotiate the contract version
-  with the required `API-Version` header.
+- Keep the canonical URI free of API versions. When the project versions the
+  contract, use its `API-Version` header policy; when it does not, do not
+  introduce versioning during resource modeling.
 - Do not put authorization roles or client types in paths.
 - Never put verbs such as `create`, `update`, `delete`, `activate`, `approve`,
   `cancel`, `publish`, `generate`, `execute`, or `retry` in resource URIs.

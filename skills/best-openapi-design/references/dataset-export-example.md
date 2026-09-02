@@ -1,7 +1,9 @@
 # Dataset Export Example
 
 Use this independent scenario to test resource modeling, asynchronous work,
-idempotency, conditional requests, and result discovery.
+idempotency, conditional requests, and result discovery. This example explicitly
+selects required date-header versioning and required idempotency keys for export
+job creation because clients retry long-running work after unknown outcomes.
 
 ## Contents
 
@@ -59,7 +61,7 @@ POST /datasets/dataset-123/export-jobs HTTP/1.1
 Host: api.example.com
 API-Version: 2026-08-02
 Content-Type: application/json
-Idempotency-Key: 4c8fd2a8-7e33-4c93-8ce7-158e3fbd8435
+Idempotency-Key: "4c8fd2a8-7e33-4c93-8ce7-158e3fbd8435"
 
 {
   "format": "csv",
@@ -93,7 +95,8 @@ Request-Id: req_01K1D3A3P0QK
 The idempotency contract binds the key to the caller, job collection, and
 request fingerprint for the documented retention window. Replaying the same
 request returns the original outcome. Reusing the key with different content
-returns the API's documented conflict problem.
+returns the API's documented `422` problem. A concurrent duplicate while the
+first request is still processing returns the documented `409` problem.
 
 ## Complete And Retrieve
 
@@ -156,7 +159,7 @@ POST /datasets/dataset-123/export-jobs HTTP/1.1
 Host: api.example.com
 API-Version: 2026-08-02
 Content-Type: application/json
-Idempotency-Key: 8e812b21-fd7d-42a0-aa85-4d043f345946
+Idempotency-Key: "8e812b21-fd7d-42a0-aa85-4d043f345946"
 
 {
   "format": "csv",
@@ -235,7 +238,9 @@ Keep retry, concurrency, and security behavior discoverable in the operation:
             schema:
               $ref: '#/components/schemas/ExportJob'
       '409':
-        $ref: '#/components/responses/IdempotencyConflict'
+        $ref: '#/components/responses/IdempotencyRequestInProgress'
+      '422':
+        $ref: '#/components/responses/IdempotencyKeyReuse'
 ```
 
 The complete contract must also define authentication failures, authorization

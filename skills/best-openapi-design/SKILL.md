@@ -16,8 +16,9 @@ Resolve design questions in this order:
 1. obey applicable IETF HTTP RFC requirements;
 2. preserve Fielding REST constraints, especially resource identification,
    representations, self-descriptive messages, and the uniform interface;
-3. apply this skill's mandatory contract profile;
-4. use project-level choices only where this skill explicitly permits them.
+3. preserve compatible published contracts and explicit project-level policy;
+4. apply this skill's baseline profile where the project has no conflicting
+   requirement or established convention.
 
 Treat Google AIP, GitHub REST, and other mature APIs as evidence, not authority.
 Do not copy RPC transcoding, protobuf conventions, legacy pagination, custom
@@ -79,13 +80,15 @@ back to a command-style endpoint.
 - Preserve existing public contracts unless the task authorizes a breaking
   change and provides a migration path.
 
-## Apply The Mandatory Contract Profile
+## Apply The Baseline Contract Profile
 
-Use these rules unless this skill explicitly defines a project-level profile:
+Use these rules where the project has no compatible established convention:
 
 - name plural collection path segments in lowercase kebab-case;
 - name query parameters and JSON properties in lowerCamelCase;
-- keep resource URIs version-free and require `API-Version: YYYY-MM-DD`;
+- keep resource URIs version-free; when API versioning is needed, use
+  `API-Version: YYYY-MM-DD`, with requiredness and default behavior selected at
+  the project level rather than imposed on every API;
 - return a single resource directly, never inside a generic `data` envelope;
 - return collections as `items` plus `pagination`, never body pagination links;
 - put pagination navigation URLs in the RFC 8288 `Link` response header;
@@ -105,8 +108,9 @@ Use these rules unless this skill explicitly defines a project-level profile:
   validated principal; authorization evaluates that principal against the
   addressed resource and resource operation;
 - require conditional writes for mutable existing resources;
-- prefer idempotent `PUT` creation when the client controls the URI; otherwise
-  require `Idempotency-Key` on `POST` creation;
+- prefer idempotent `PUT` creation when the client controls the URI; for `POST`
+  creation, decide whether `Idempotency-Key` is required from the operation's
+  retry, duplicate-effect, and unknown-outcome risks;
 - model long-running work as a domain-specific job or request resource, never a
   generic `/operations` collection.
 
@@ -209,7 +213,8 @@ Read
 for every protected operation or identity-related API.
 
 - canonical path, method, and stable unique operation identifier;
-- the required date-based API version request and response header;
+- the `API-Version` header contract when versioning is used, including
+  requiredness, defaults, supported dates, and response signaling;
 - path, query, header, and cookie parameters;
 - request and response media types and schemas;
 - success statuses, headers, and response bodies;

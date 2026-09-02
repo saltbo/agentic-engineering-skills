@@ -39,7 +39,7 @@ Provide one framework-level implementation for each cross-cutting concern:
 
 | Concern | Framework responsibility |
 | --- | --- |
-| API version | Parse required `API-Version`, select the date contract, echo a successfully selected value, set `Vary`, reject invalid values |
+| API version | When the project versions the API, parse its `API-Version` header with the selected requiredness and default, supported dates, response signaling, cache variation, and invalid-value behavior |
 | Errors | Map validation, authentication, authorization, conflicts, preconditions, rate limits, and unexpected failures to RFC 9457 |
 | Pagination | Parse the selected project profile, enforce bounds, serialize `pagination`, and build the RFC 8288 `Link` header |
 | Filtering and sorting | Validate declared fields, types, grammar, cost limits, and `orderBy` tie-breakers |
@@ -69,7 +69,7 @@ generic repository/service hierarchy merely to centralize behavior. Centralize
 wire protocol policy; keep domain rules in the owning domain.
 
 Ensure middleware ordering is intentional. At minimum, correlation and tracing
-must surround authentication, version selection, validation, routing, and error
+must surround authentication, any version selection, validation, routing, and error
 mapping so every response, including an early failure, has the required
 correlation and contract headers. Authentication must establish the principal
 before authorization. Authorization must run after the framework knows the
@@ -107,7 +107,8 @@ and remove dead parallel helpers.
 Write focused tests proving the shared layer once and representative contract
 tests proving endpoints use it:
 
-- missing, malformed, supported, and unsupported `API-Version`;
+- when versioning is selected, missing or defaulted, malformed, supported, and
+  unsupported `API-Version` values according to the project contract;
 - malformed input and field validation as Problem Details;
 - required and stale preconditions;
 - idempotent replay and conflicting key reuse;

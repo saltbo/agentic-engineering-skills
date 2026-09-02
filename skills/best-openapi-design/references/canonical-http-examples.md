@@ -2,7 +2,9 @@
 
 Use these examples as the default output shape. Replace the domain names and
 schemas, but preserve the protocol rules. The examples use the `identity-access`
-domain group and a page-pagination project profile.
+domain group and a page-pagination project profile. They intentionally omit an
+API version selector because versioning is a separate project decision, and the
+ordinary user-creation example does not promise idempotent replay.
 
 ## Contents
 
@@ -41,7 +43,6 @@ syntax:
 ```http
 GET /users?page=1&pageSize=2&state=active&orderBy=createdAt%20desc%2Cid%20asc HTTP/1.1
 Host: api.example.com
-API-Version: 2026-08-02
 Accept: application/json
 traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
 ```
@@ -49,9 +50,8 @@ traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-API-Version: 2026-08-02
 Request-Id: req_01K1D2A6PXQ9
-Vary: API-Version, Accept
+Vary: Accept
 Link: <https://api.example.com/users?page=2&pageSize=2&state=active&orderBy=createdAt%20desc%2Cid%20asc>; rel="next", <https://api.example.com/users?page=487&pageSize=2&state=active&orderBy=createdAt%20desc%2Cid%20asc>; rel="last"
 
 {
@@ -108,10 +108,8 @@ Use `POST` when the server assigns the canonical URI:
 ```http
 POST /users HTTP/1.1
 Host: api.example.com
-API-Version: 2026-08-02
 Content-Type: application/json
 Accept: application/json
-Idempotency-Key: 2f5f8c12-75b8-4e5d-a3c1-9f6a91b6e824
 Prefer: return=representation
 
 {
@@ -124,7 +122,6 @@ Prefer: return=representation
 HTTP/1.1 201 Created
 Location: https://api.example.com/users/usr_01
 Content-Type: application/json
-API-Version: 2026-08-02
 Request-Id: req_01K1D2B8GJ5A
 ETag: "user-01-v1"
 Preference-Applied: return=representation
@@ -141,9 +138,10 @@ Preference-Applied: return=representation
 }
 ```
 
-The body is the resource itself, not `{ "data": { ... } }`. Replaying the same
-key and request returns the original observable outcome. Reusing the key with a
-different request returns `409 Conflict`.
+The body is the resource itself, not `{ "data": { ... } }`. Define whether an
+unknown outcome may be retried. If this operation instead promises deduplication,
+require or accept `Idempotency-Key` explicitly and define its complete replay,
+retention, concurrency, and conflicting-reuse contract.
 
 ## Create At A Known URI
 
@@ -152,7 +150,6 @@ Use idempotent `PUT` when the client owns a stable identifier:
 ```http
 PUT /users/usr_client_01 HTTP/1.1
 Host: api.example.com
-API-Version: 2026-08-02
 Content-Type: application/json
 If-None-Match: *
 
@@ -172,14 +169,12 @@ Use only enumerated `view` and `include` values:
 ```http
 GET /users/usr_01?view=full&include=manager HTTP/1.1
 Host: api.example.com
-API-Version: 2026-08-02
 Accept: application/json
 ```
 
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-API-Version: 2026-08-02
 Request-Id: req_01K1D2C3VH6N
 ETag: "user-01-v3"
 
@@ -210,7 +205,6 @@ current validator:
 ```http
 PUT /users/usr_01 HTTP/1.1
 Host: api.example.com
-API-Version: 2026-08-02
 Content-Type: application/json
 If-Match: "user-01-v3"
 
@@ -230,7 +224,6 @@ Use JSON Merge Patch by default:
 ```http
 PATCH /users/usr_01 HTTP/1.1
 Host: api.example.com
-API-Version: 2026-08-02
 Content-Type: application/merge-patch+json
 If-Match: "user-01-v4"
 
@@ -249,13 +242,11 @@ business `status` as a disguised RPC.
 ```http
 DELETE /users/usr_01 HTTP/1.1
 Host: api.example.com
-API-Version: 2026-08-02
 If-Match: "user-01-v5"
 ```
 
 ```http
 HTTP/1.1 204 No Content
-API-Version: 2026-08-02
 Request-Id: req_01K1D2D02B4T
 ```
 
@@ -270,13 +261,11 @@ the page profile above:
 ```http
 GET /events?pageSize=50 HTTP/1.1
 Host: api.example.com
-API-Version: 2026-08-02
 ```
 
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-API-Version: 2026-08-02
 Request-Id: req_01K1D2EJ6M31
 Link: <https://api.example.com/events?pageSize=50&pageToken=opaque-token>; rel="next"
 
@@ -300,7 +289,6 @@ that violates declared content constraints returns `422`:
 ```http
 HTTP/1.1 422 Unprocessable Content
 Content-Type: application/problem+json
-API-Version: 2026-08-02
 Request-Id: req_01K1D2F0QAB8
 
 {
@@ -324,9 +312,9 @@ Use these protocol distinctions consistently:
 | --- | --- |
 | Missing required `If-Match` | `428 Precondition Required` |
 | Stale `If-Match` | `412 Precondition Failed` |
-| Reused idempotency key with different content | `409 Conflict` |
+| Reused idempotency key with different content | `422 Unprocessable Content` |
+| Concurrent request with the same idempotency key | `409 Conflict` |
 | Unsupported PATCH media type | `415 Unsupported Media Type` |
-| Missing, malformed, or unsupported API version | `400 Bad Request` |
 | Missing or invalid authentication | `401 Unauthorized` with `WWW-Authenticate` |
 | Authenticated principal lacks resource authority | `403 Forbidden` |
 | Rate limit exceeded | `429 Too Many Requests` with `Retry-After` when known |

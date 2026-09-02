@@ -25,7 +25,7 @@ understand the protocol.
 | --- | --- | --- |
 | `GET` | Read a representation or collection | Safe, idempotent, cacheable unless constrained |
 | `HEAD` | Read the metadata a `GET` would return | Safe, idempotent, no response content |
-| `POST` | Create a server-identified member in the addressed collection | Neither safe nor inherently idempotent; require `Idempotency-Key` |
+| `POST` | Create a server-identified member in the addressed collection | Neither safe nor inherently idempotent; define retry behavior and require `Idempotency-Key` only when the operation needs deduplication |
 | `PUT` | Create or completely replace the resource at a known URI | Idempotent |
 | `PATCH` | Partially update a resource | Define patch media type and idempotency behavior |
 | `DELETE` | Remove the association represented by the target URI | Idempotent intended effect |
@@ -38,8 +38,11 @@ or path operations. Never use ambiguous `application/json` patch semantics.
 
 When the client controls a stable identifier, create the known URI with
 idempotent `PUT`. When the server assigns the identifier, create through `POST`
-on the collection and require `Idempotency-Key`. A create-only `PUT` can use
-`If-None-Match: *`; replacement of an existing resource requires `If-Match`.
+on the collection and define the duplicate and unknown-outcome behavior. Require
+`Idempotency-Key` when callers must automatically retry an unknown outcome and
+cannot reliably discover the original result, or when duplicate effects are
+costly or irreversible. A create-only `PUT` can use `If-None-Match: *`;
+replacement of an existing resource requires `If-Match`.
 
 Do not use any method to invoke a business command. `POST` does not grant an
 escape hatch for RPC. It creates the resource represented by the target
@@ -142,20 +145,29 @@ or unknown outcome.
 
 - Rely on method idempotency for `PUT` and `DELETE`, while preserving the same
   intended effect across repetitions.
-- Require `Idempotency-Key` for `POST` resource creation. Require it for any
-  non-idempotent `PATCH` exposed at a network boundary.
+- Consider `Idempotency-Key` for non-idempotent `POST` and `PATCH` operations.
+  Require it when clients must automatically retry an unknown outcome that they
+  cannot otherwise resolve, duplicate effects are costly or irreversible, or
+  the operation contract explicitly promises deduplication. Do not add it to
+  every write by default.
 - Specify key scope, identity binding, retention window, request fingerprint,
   replay response, and behavior when a key is reused with different content.
 - Do not claim exactly-once execution. Define the observable deduplication
   guarantee instead.
 - Return retry timing with `Retry-After` when the server knows it.
 
-Bind a key to the authenticated principal, HTTP method, canonical target
-collection, selected API version, and normalized request fingerprint. Replaying
-the same request returns the original observable response. Reusing the key with
-different content returns `409 Conflict` as Problem Details. Every API must
-declare the retention window; the Idempotency-Key header specification remains
-an IETF Internet-Draft rather than an RFC.
+When an operation uses a key, bind it to the authenticated principal, HTTP
+method, canonical target, selected API version when applicable, and normalized
+request fingerprint. Replaying the same request returns the original observable
+response. Reusing the key with different content returns `422 Unprocessable
+Content`; a duplicate request received while the original is still processing
+returns `409 Conflict`. Declare the retention window and quote the field value
+as an RFC 8941 string, for example `Idempotency-Key: "uuid-value"`.
+
+The Idempotency-Key header specification is an IETF Internet-Draft, not an RFC.
+Treat it as work in progress, verify the current revision before implementation,
+and distinguish its wire requirements from the project's decision about which
+operations require the header.
 
 ## Collections
 
@@ -324,8 +336,8 @@ the project's observability and privacy policy explicitly requires it.
 - Declare request and response media types explicitly.
 - Return `415` for unsupported request media and `406` when negotiation cannot
   produce an acceptable response.
-- Use content negotiation for representation media types, not API versioning;
-  this skill versions the contract only through `API-Version`.
+- Use content negotiation for representation media types, not API versioning.
+  When versioning is selected, use the project's `API-Version` header policy.
 
 ## Authentication And Authorization
 
@@ -361,4 +373,4 @@ the project's observability and privacy policy explicitly requires it.
 - [RFC 6750: OAuth 2.0 Bearer Token Usage](https://www.rfc-editor.org/rfc/rfc6750)
 - [W3C Trace Context](https://www.w3.org/TR/trace-context/)
 - [OpenTelemetry Context Propagation](https://opentelemetry.io/docs/concepts/context-propagation/)
-- [Idempotency-Key HTTP Header Field Internet-Draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)
+- [Idempotency-Key HTTP Header Field Internet-Draft (work in progress)](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)

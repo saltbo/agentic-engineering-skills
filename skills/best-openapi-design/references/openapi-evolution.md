@@ -7,7 +7,7 @@ API contract.
 
 - [Select The OpenAPI Version Deliberately](#select-the-openapi-version-deliberately)
 - [Enforce A Resource-Only Contract](#enforce-a-resource-only-contract)
-- [Encode The Mandatory Profile](#encode-the-mandatory-profile)
+- [Encode The Contract Profile](#encode-the-contract-profile)
 - [Design Schemas For Intent](#design-schemas-for-intent)
 - [Evaluate Compatibility](#evaluate-compatibility)
 - [Version And Deprecate](#version-and-deprecate)
@@ -63,14 +63,18 @@ request, response, retry, authentication, or parsing logic, encode it in the
 contract where OpenAPI can express it and document the remainder beside the
 operation.
 
-## Encode The Mandatory Profile
+## Encode The Contract Profile
 
-- Define a reusable required `API-Version` request header on every operation.
-  Accept only full-date values in `YYYY-MM-DD` form.
-- Echo the selected `API-Version` after version selection succeeds and include
-  it in `Vary` for cacheable responses.
-- Do not put a version in a resource path, hostname, or query parameter. Do not
-  silently select a default when the required header is missing.
+- If the project does not version its API, do not add a version selector merely
+  because an API exists.
+- When versioning is required, keep resource URIs version-free and use one
+  project-wide `API-Version` request header with full-date `YYYY-MM-DD` values.
+  Do not put the version in a path, hostname, query parameter, or media type.
+- Encode the header's actual requiredness in OpenAPI. Mark it required only when
+  the server intentionally rejects requests without an explicit version;
+  otherwise document the default and supported dates.
+- Echo the selected version when the contract promises that signal and include
+  `API-Version` in `Vary` on cacheable responses.
 - Use stable `listUsers`, `getUser`, `createUser`, `replaceUser`, `updateUser`,
   and `deleteUser` style `operationId` values. Use resource operation words even
   when the product requirement is phrased as a command.
@@ -162,14 +166,18 @@ When a breaking change is authorized:
    channel and protocol headers when applicable;
 6. remove old behavior only after the compatibility commitment is satisfied.
 
-Use the required date-based `API-Version` header. Keep resource URIs stable
-across versions. Publish supported version dates and reject missing, malformed,
-or unsupported values with the documented Problem Details response. Never add
-`/v1`, a version query parameter, or media-type versioning beside it.
+Keep resource URIs version-free and publish supported dates, defaults,
+deprecation, and rejection behavior. Do not put the API version in a path,
+hostname, query parameter, or media type. If an existing public contract already
+does so, treat it as a compatibility deviation: do not copy it into new
+operations or break clients silently; design the canonical `API-Version` header
+replacement and an explicit migration.
 
-`API-Version` is this skill's house header, not an IETF standard. The stable-URI
-and date-version policy is informed by mature public APIs but is deliberately
-fixed here as one contract. Do not prefix the header with `X-`.
+When a project explicitly selects date-based header versioning, `API-Version:
+YYYY-MM-DD` is a reasonable profile. It is a project-defined field, not an IETF
+standard. Define whether it is required, whether a default exists, which dates
+are supported, what the response echoes, and how caches vary. Do not prefix a
+new field with `X-`.
 
 ## Contract-First Verification
 
