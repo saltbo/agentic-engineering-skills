@@ -6,6 +6,43 @@ boundary so a small task does not load an entire engineering handbook.
 All skills in this engineering suite use the `bep-` namespace so their source
 is recognizable in catalogs, prompts, and cross-skill references.
 
+## Install
+
+Inspect the skills available in the repository:
+
+```bash
+npx skills add saltbo/agentic-engineering-skills --list
+```
+
+Select skills and target agents interactively:
+
+```bash
+npx skills add saltbo/agentic-engineering-skills
+```
+
+Install every skill globally for Codex without prompts:
+
+```bash
+npx skills add saltbo/agentic-engineering-skills \
+  --skill '*' \
+  --agent codex \
+  --global \
+  --yes
+```
+
+Install only one skill globally:
+
+```bash
+npx skills add saltbo/agentic-engineering-skills \
+  --skill bep-software-testing \
+  --agent codex \
+  --global \
+  --yes
+```
+
+If the `skills` CLI is installed globally, use `skills` in place of
+`npx skills` in the commands above.
+
 ## Skills
 
 | Skill | Use it for |
