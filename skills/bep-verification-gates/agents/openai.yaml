@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Verification Gates"
+  short_description: "Build auditable coverage and blocking CI governance"
+  default_prompt: "Use $bep-verification-gates to design or audit this verification policy."

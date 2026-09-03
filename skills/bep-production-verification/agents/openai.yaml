@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Production Verification"
+  short_description: "Verify deployed environments safely and explicitly"
+  default_prompt: "Use $bep-production-verification to design or review this deployed-environment check."

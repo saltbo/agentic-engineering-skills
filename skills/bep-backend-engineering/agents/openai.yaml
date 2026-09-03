@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Backend Engineering"
+  short_description: "Design clear backend ownership and dependency boundaries"
+  default_prompt: "Use $bep-backend-engineering to design or review this backend architecture."

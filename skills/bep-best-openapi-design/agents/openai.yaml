@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Best OpenAPI Design"
+  short_description: "Enforce resource-oriented OpenAPI and framework contracts"
+  default_prompt: "Use $bep-best-openapi-design to model, group, document, and implement this API as a centralized resource-oriented OpenAPI contract."

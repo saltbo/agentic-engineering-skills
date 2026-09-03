@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Engineering Review"
+  short_description: "Review outcomes, risks, contracts, and verified findings"
+  default_prompt: "Use $bep-engineering-review to review this change and report verified findings."

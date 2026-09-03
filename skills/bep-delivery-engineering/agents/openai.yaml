@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Delivery Engineering"
+  short_description: "Ship compatible, reproducible, and reversible changes"
+  default_prompt: "Use $bep-delivery-engineering to plan or review this release transition."

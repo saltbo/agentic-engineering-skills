@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Software Testing"
+  short_description: "Choose and implement proportionate executable proof"
+  default_prompt: "Use $bep-software-testing to design or review the tests for this behavior."

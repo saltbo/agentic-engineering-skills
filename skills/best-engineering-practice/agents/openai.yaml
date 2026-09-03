@@ -1,4 +1,0 @@
-interface:
-  display_name: "Best Engineering Practice"
-  short_description: "Apply architecture and proportional verification guidance"
-  default_prompt: "Use $best-engineering-practice to handle this software task with explicit failure, clear ownership, applicable architecture guidance, and proportional executable proof."

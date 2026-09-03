@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Software Debugging"
+  short_description: "Find and prove the causal source of a software failure"
+  default_prompt: "Use $bep-software-debugging to diagnose this reproducible failure."

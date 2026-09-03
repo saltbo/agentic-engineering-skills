@@ -1,0 +1,6 @@
+interface:
+  display_name: "BEP · Engineering Practice Audit"
+  short_description: "Run a comprehensive cross-discipline engineering audit"
+  default_prompt: "Use $bep-best-engineering-practice to audit this change across the applicable engineering disciplines."
+policy:
+  allow_implicit_invocation: false

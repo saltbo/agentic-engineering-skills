@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · HTTP Engineering"
+  short_description: "Design reliable end-to-end HTTP lifecycle semantics"
+  default_prompt: "Use $bep-http-engineering to design or review this HTTP interaction."

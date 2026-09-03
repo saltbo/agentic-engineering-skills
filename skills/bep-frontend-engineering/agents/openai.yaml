@@ -1,0 +1,4 @@
+interface:
+  display_name: "BEP · Frontend Engineering"
+  short_description: "Design coherent browser and feature architecture"
+  default_prompt: "Use $bep-frontend-engineering to design or review this frontend architecture."
