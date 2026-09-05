@@ -9,7 +9,7 @@ Ran 4 tests in 0.000s
 OK
 
 Causal mutation paid+ship -> cancelled was detected: PASS
-test_allowed_transitions (test_state.TransitionTests.test_allowed_transitions) ... 
+test_allowed_transitions (test_state.TransitionTests.test_allowed_transitions) ...
   test_allowed_transitions (test_state.TransitionTests.test_allowed_transitions) (state='paid', event='ship') ... FAIL
 test_illegal_transitions_between_known_states_and_events (test_state.TransitionTests.test_illegal_transitions_between_known_states_and_events) ... ok
 test_invalid_event_boundaries (test_state.TransitionTests.test_invalid_event_boundaries) ... ok
