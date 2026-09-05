@@ -1,24 +1,30 @@
 ---
 name: bep-frontend-engineering
-description: Design, restructure, or review frontend architecture involving feature boundaries, browser state, remote data, rendering, forms, accessibility, browser security, persistence, compatibility, or client performance. Do not use for a small visual or mechanical edit.
+description: Design, restructure, or review frontend ownership, state, effects, or browser boundaries. Not for small visual or copy edits.
 ---
 
 # Frontend Engineering
 
-Apply browser-runtime architecture guidance without loading backend or general
-verification policy by default.
+Apply BEP preferences directly to a new project. In an existing project, work
+within its feature and framework conventions and improve the affected boundary;
+do not introduce an architecture or tooling migration merely to match this skill.
+Keep server business policy authoritative and each state/effect with one owner.
 
-- Read [references/architecture.md](references/architecture.md) when the task
-  changes feature ownership, state, effects, transport boundaries, rendering,
-  forms, accessibility, security, offline behavior, storage, observability,
-  compatibility, or performance.
-- Read [references/verification.md](references/verification.md) only when the
-  task designs or reviews frontend proof inventories, browser gates, visual or
-  accessibility proof, or architecture enforcement.
-- Use `$bep-http-engineering` only when browser-server protocol behavior is in scope.
-- Use `$bep-software-testing` for general test-layer decisions and
-  `$bep-verification-gates` only for formal coverage or CI governance.
+Read only the relevant reference:
 
-Preserve the requested mode and the repository's UI conventions. Keep each
-state and effect with one owner, treat external values as untrusted at runtime,
-and keep server policy authoritative.
+- [Ownership and state](references/ownership.md): features, dependencies, state,
+  and effect lifecycles.
+- [Remote data](references/remote-data.md): transport, decoding, and reconciliation.
+- [Interaction](references/interaction.md): components, forms, and accessibility.
+- [Security and storage](references/security-storage.md): identity, scripts,
+  durable browser data, and offline behavior.
+- [Performance](references/performance.md): rendering, telemetry, and compatibility.
+- [Verification](references/verification.md): only for formal frontend inventories,
+  architecture enforcement, or browser-quality governance.
+
+For implementation, local acceptance is required: use focused checks and inspect
+affected interaction and responsive behavior in a local browser when applicable.
+Fix change-caused failures and report what was exercised. Choose test layers with
+`$bep-software-testing` when designing tests; do not load it just to run them.
+Use `$bep-http-engineering` only when HTTP semantics change. Missing optional
+skills do not block independent frontend work. Reviews remain read-only.

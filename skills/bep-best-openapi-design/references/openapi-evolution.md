@@ -1,5 +1,11 @@
 # OpenAPI And Contract Evolution
 
+Scope: apply BEP design preferences directly to new APIs. In an existing API,
+preserve established supported conventions, including version placement, naming,
+and representation shapes. Do not require migration or deprecation merely for
+style conformity. The checks below apply to the changed contract and selected
+profile; security, protocol correctness, and supported behavior remain required.
+
 Use this reference while publishing, reviewing, or changing the machine-readable
 API contract.
 
@@ -40,11 +46,10 @@ proven addressed resource. For every path and operation, verify:
 - request and response schemas describe the resource transition rather than a
   generic command envelope.
 
-Do not waive this gate for legacy style, framework routing conventions, or a
-user story that names the desired action. Model and publish a resource-oriented
-replacement. When compatibility requires temporary coexistence, mark the old
-route as a violation and deprecated surface; never use it as the pattern for new
-operations.
+For new BEP contracts, use this resource-only gate. For an existing API, extend
+its supported conventions consistently. Record preference differences only when
+relevant; do not require resource replacement or deprecation unless the requested
+work includes that migration.
 
 At minimum, declare and verify:
 
@@ -166,12 +171,11 @@ When a breaking change is authorized:
    channel and protocol headers when applicable;
 6. remove old behavior only after the compatibility commitment is satisfied.
 
-Keep resource URIs version-free and publish supported dates, defaults,
-deprecation, and rejection behavior. Do not put the API version in a path,
-hostname, query parameter, or media type. If an existing public contract already
-does so, treat it as a compatibility deviation: do not copy it into new
-operations or break clients silently; design the canonical `API-Version` header
-replacement and an explicit migration.
+For a new BEP API, keep resource URIs version-free. For an existing API, keep
+its established version scheme, including path versions for new operations in
+that API. Do not introduce date headers or a migration solely to satisfy BEP.
+When a version-policy migration is explicitly in scope, publish its supported
+versions, defaults, coexistence, deprecation, and rejection behavior.
 
 When a project explicitly selects date-based header versioning, `API-Version:
 YYYY-MM-DD` is a reasonable profile. It is a project-defined field, not an IETF

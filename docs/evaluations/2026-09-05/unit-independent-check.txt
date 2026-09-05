@@ -1,0 +1,33 @@
+test_allowed_transitions (test_state.TransitionTests.test_allowed_transitions) ... ok
+test_illegal_transitions_between_known_states_and_events (test_state.TransitionTests.test_illegal_transitions_between_known_states_and_events) ... ok
+test_invalid_event_boundaries (test_state.TransitionTests.test_invalid_event_boundaries) ... ok
+test_invalid_state_boundaries (test_state.TransitionTests.test_invalid_state_boundaries) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
+
+Causal mutation paid+ship -> cancelled was detected: PASS
+test_allowed_transitions (test_state.TransitionTests.test_allowed_transitions) ... 
+  test_allowed_transitions (test_state.TransitionTests.test_allowed_transitions) (state='paid', event='ship') ... FAIL
+test_illegal_transitions_between_known_states_and_events (test_state.TransitionTests.test_illegal_transitions_between_known_states_and_events) ... ok
+test_invalid_event_boundaries (test_state.TransitionTests.test_invalid_event_boundaries) ... ok
+test_invalid_state_boundaries (test_state.TransitionTests.test_invalid_state_boundaries) ... ok
+
+======================================================================
+FAIL: test_allowed_transitions (test_state.TransitionTests.test_allowed_transitions) (state='paid', event='ship')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/tmp52zv6_54/unit/test_state.py", line 15, in test_allowed_transitions
+    self.assertEqual(transition(state, event), expected)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'cancelled' != 'shipped'
+- cancelled
++ shipped
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+FAILED (failures=1)

@@ -1,5 +1,11 @@
 # Framework Integration
 
+Scope: apply BEP design preferences directly to new APIs. In an existing API,
+preserve established supported conventions, including version placement, naming,
+and representation shapes. Do not require migration or deprecation merely for
+style conformity. The checks below apply to the changed contract and selected
+profile; security, protocol correctness, and supported behavior remain required.
+
 Use this reference whenever implementing or evolving an API in an existing
 project. Apply the contract through the project's web framework instead of
 repeating protocol logic in handlers.
@@ -29,9 +35,10 @@ Before editing an endpoint, identify:
   conventions;
 - published compatibility commitments and active clients.
 
-Classify each existing convention as compliant, incompatible, or missing.
-Preserve compliant framework mechanisms. Replace or migrate incompatible policy;
-do not build a second parallel convention for new endpoints.
+Identify the mechanisms relevant to the change and reuse them. Distinguish a
+BEP style difference from an actual contract or security defect. Preserve
+established conventions and avoid parallel policy; migrate only within the
+requested scope.
 
 ## Build One Contract Layer
 
@@ -89,14 +96,14 @@ resource operation and before a handler mutates state.
 
 ## Migrate Without Duplicating Policy
 
-When the project lacks a shared contract layer, create the smallest
-framework-native layer before implementing the requested endpoint. Move every
-touched endpoint onto it. Do not leave copied helper logic in handlers.
+Reuse existing shared mechanisms. Add a small framework-native boundary only
+when the requested work introduces actual cross-cutting duplication. A local
+endpoint edit does not require building a framework layer or migrating all
+endpoints it touches.
 
-When existing public endpoints are incompatible, design one canonical policy,
-document the deviations, and use the selected API-version boundary or an
-explicit migration to converge. Do not silently change published behavior and
-do not preserve incompatible behavior as the template for new code.
+Preserve established public conventions, even when they differ from BEP defaults.
+For an explicitly requested unification, define one target policy and a tested
+compatibility transition; never silently change published behavior.
 
 If the task is limited in scope, report untouched deviations and the migration
 boundary. If the task authorizes project-wide unification, migrate all endpoints

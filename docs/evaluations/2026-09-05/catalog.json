@@ -1,0 +1,68 @@
+[
+  {
+    "name": "bep-backend-engineering",
+    "description": "Design, restructure, or review backend ownership, dependencies, transactions, messaging, or lifecycle. Not for ordinary handler edits.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-backend-engineering/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-best-engineering-practice",
+    "description": "Perform an explicitly requested comprehensive engineering-practice audit across relevant disciplines.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-best-engineering-practice/SKILL.md",
+    "explicit_only": true
+  },
+  {
+    "name": "bep-best-openapi-design",
+    "description": "Design, change, or review REST/OpenAPI resource models, routes, or representations. Not for HTTP-only fixes or documentation wording.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-best-openapi-design/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-delivery-engineering",
+    "description": "Plan, execute, or review releases, deployments, data/contract migrations, or rollback. Not for ordinary local implementation.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-delivery-engineering/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-engineering-review",
+    "description": "Review a concrete software change for outcome correctness, engineering risk, and contract impact. Not an automatic implementation pass.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-engineering-review/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-frontend-engineering",
+    "description": "Design, restructure, or review frontend ownership, state, effects, or browser boundaries. Not for small visual or copy edits.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-frontend-engineering/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-http-engineering",
+    "description": "Design or fix HTTP caching, retries, conditional writes, authentication transport, or other request lifecycle semantics.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-http-engineering/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-production-verification",
+    "description": "Prepare or execute regression checks against a deployed environment after release or on request. Not for local acceptance.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-production-verification/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-software-debugging",
+    "description": "Investigate software failures or performance regressions and implement causal fixes. Not for typos or speculative hardening.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-software-debugging/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-software-testing",
+    "description": "Design, implement, or review automated tests and their proof layers. Not needed merely to run existing tests.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-software-testing/SKILL.md",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-verification-gates",
+    "description": "Build or audit formal proof inventories, coverage policy, native-report reconciliation, or blocking CI gates. Not for ordinary tests.",
+    "path": "/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/bep-eval-5ghazk41/skills/bep-verification-gates/SKILL.md",
+    "explicit_only": false
+  }
+]

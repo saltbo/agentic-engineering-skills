@@ -1,0 +1,57 @@
+[
+  {
+    "name": "bep-backend-engineering",
+    "description": "Design, restructure, or review backend architecture for services, workers, CLI processes, persistence, messaging, external integrations, dependency ownership, transactions, or service lifecycle. Do not use for a small backend edit that does not affect these boundaries.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-best-engineering-practice",
+    "description": "Run an explicit cross-cutting engineering audit spanning architecture, failure handling, compatibility, delivery, verification, and review. Use only when the user invokes this skill or requests a comprehensive engineering-practice audit; use a narrower engineering skill for ordinary work.",
+    "explicit_only": true
+  },
+  {
+    "name": "bep-best-openapi-design",
+    "description": "Design, review, implement, and enforce strictly resource-oriented RESTful HTTP APIs and OpenAPI contracts. Use whenever deciding whether a concept is a field, value object, or resource; assigning resources to domain groups; defining or changing routes, canonical URIs, methods, representations, pagination, errors, authentication, authorization, request and trace correlation, idempotency, concurrency, versioning, compatibility, or framework-level API infrastructure. Prevent business-action APIs, verb or RPC-style paths, command endpoints, UI- or database-shaped contracts, arbitrary resource placement, endpoint-local protocol logic, and mixed authentication/authorization concerns. Require every operation to address a proven resource through standard HTTP semantics, and stop when no valid resource model or owning domain exists.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-delivery-engineering",
+    "description": "Plan, implement, or review compatibility changes, persisted-data migrations, dependency or tool reproducibility, feature-flag transitions, releases, deployment sequencing, rollback, or roll-forward. Do not use for an unreleased internal edit with no delivery boundary.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-engineering-review",
+    "description": "Review a concrete software change for requested-outcome correctness, engineering risk, supported-contract impact, and unresolved findings. Use for explicit code review or engineering audit requests, not as an automatic second pass for every implementation.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-frontend-engineering",
+    "description": "Design, restructure, or review frontend architecture involving feature boundaries, browser state, remote data, rendering, forms, accessibility, browser security, persistence, compatibility, or client performance. Do not use for a small visual or mechanical edit.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-http-engineering",
+    "description": "Design, implement, or review HTTP lifecycle semantics including authentication transport, caching, idempotency, concurrency, retries, uploads, redirects, webhooks, correlation, and browser-server reconciliation. Use bep-best-openapi-design instead when the task is only REST/OpenAPI resource modeling.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-production-verification",
+    "description": "Design, implement, run, or review production verification tests, post-deployment checks, production smoke tests, or another bounded verification profile against an already deployed environment. Do not use for hermetic local or CI testing.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-software-debugging",
+    "description": "Diagnose a reproducible software defect, regression, intermittent failure, or unexplained performance change and identify its causal fix. Do not use for feature implementation, broad refactoring, or speculative hardening without a symptom.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-software-testing",
+    "description": "Design, implement, or review automated tests, regression proof, test-layer selection, contracts, migrations, integration boundaries, E2E journeys, fixtures, or test determinism. Do not use merely because an ordinary code change will run existing tests.",
+    "explicit_only": false
+  },
+  {
+    "name": "bep-verification-gates",
+    "description": "Design, implement, or audit formal verification governance such as proof inventories, coverage denominators, native test reports, exceptions, architecture enforcement, browser gates, or blocking CI policy. Do not use for ordinary test writing or merely running existing checks.",
+    "explicit_only": false
+  }
+]

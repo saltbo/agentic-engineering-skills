@@ -1,11 +1,15 @@
 ---
 name: bep-engineering-review
-description: Review a concrete software change for requested-outcome correctness, engineering risk, supported-contract impact, and unresolved findings. Use for explicit code review or engineering audit requests, not as an automatic second pass for every implementation.
+description: Review a concrete software change for outcome correctness, engineering risk, and contract impact. Not an automatic implementation pass.
 ---
 
 # Engineering Review
 
-Remain read-only unless the user separately asks to resolve findings.
+Remain read-only for a review-only request. If the user also asks to resolve
+findings, that authorization includes in-scope fixes and local acceptance.
+Apply BEP preferences directly to new projects. For existing projects, evaluate
+against their established conventions and support promises; distinguish a
+preference difference from a correctness, security, or compatibility defect.
 
 Review on two independent axes:
 

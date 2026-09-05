@@ -1,0 +1,10 @@
+Local acceptance/deploy/verification ordering: PASS
+One read per deployed version/health/product: PASS
+Unrelated local-only class excluded from explicit live selection: PASS
+test_health (test_e2e.OrderJourney.test_health) ... ok
+test_read_order_total (test_e2e.OrderJourney.test_read_order_total) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.044s
+
+OK

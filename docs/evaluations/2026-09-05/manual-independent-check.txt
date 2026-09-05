@@ -1,0 +1,2 @@
+Local acceptance before deploy and post-deploy product/version/health reads: PASS
+No reset or authentication attempt: PASS

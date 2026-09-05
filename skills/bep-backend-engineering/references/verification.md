@@ -1,11 +1,12 @@
 # Backend Verification Profile
 
-Apply this profile when production or review affects HTTP or RPC operations,
-Repositories, external Adapters, caches, queue Consumers, migrations, service
-lifecycle, execution-boundary observability, or backend dependency direction.
-Use `$bep-software-testing` when proof-layer design is in scope and
-`$bep-verification-gates` when formal coverage or blocking CI governance is in
-scope. Neither is a prerequisite for reading this profile.
+Apply this profile only when designing or auditing formal runtime proof
+inventories or architecture/browser-quality governance. New governance uses BEP
+preferences; existing projects retain their adopted policy unless transition is
+in scope. Ordinary runtime edits require focused local acceptance, not these
+inventories. Prove each behavior at its cheapest complete layer; additional layers
+cover distinct integration risks. Use `$bep-verification-gates` for shared identity,
+coverage, and execution protocols only when that governance is in scope.
 
 ## Contents
 

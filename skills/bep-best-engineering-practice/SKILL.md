@@ -1,30 +1,28 @@
 ---
 name: bep-best-engineering-practice
-description: Run an explicit cross-cutting engineering audit spanning architecture, failure handling, compatibility, delivery, verification, and review. Use only when the user invokes this skill or requests a comprehensive engineering-practice audit; use a narrower engineering skill for ordinary work.
+description: Perform an explicitly requested comprehensive engineering-practice audit across relevant disciplines.
 ---
 
-# Best Engineering Practice
+# Comprehensive Engineering Audit
 
-Audit a software change or system across engineering disciplines. This is the
-explicit umbrella workflow, not the default entry point for ordinary coding.
+Use only for an explicitly requested cross-discipline audit. Preserve the existing
+explicit-only invocation policy. A review-only request does not authorize repairs;
+a request to audit and fix includes in-scope correction and local acceptance.
 
-Read [references/core.md](references/core.md), then load only the independently
-installed skills relevant to the requested audit:
+Read [audit scope](references/core.md), then inspect only the relevant disciplines:
 
-- `$bep-backend-engineering` for backend ownership and dependency direction;
-- `$bep-frontend-engineering` for browser architecture and UI runtime behavior;
-- `$bep-http-engineering` for HTTP lifecycle and protocol semantics;
-- `$bep-software-testing` for proof-layer and test-design decisions;
-- `$bep-verification-gates` for coverage governance and blocking CI policy;
-- `$bep-production-verification` for deployed-environment verification;
-- `$bep-software-debugging` for a fault or regression investigation;
-- `$bep-delivery-engineering` for compatibility, migration, release, or rollback;
-- `$bep-engineering-review` for risk classification and review disposition;
-- `$bep-best-openapi-design` for REST/OpenAPI resource and contract design.
+- `$bep-backend-engineering`: backend ownership and dependencies.
+- `$bep-frontend-engineering`: browser state and feature boundaries.
+- `$bep-http-engineering`: request lifecycle semantics.
+- `$bep-best-openapi-design`: resource and representation design.
+- `$bep-software-testing`: test pyramid and behavioral proof.
+- `$bep-verification-gates`: explicitly scoped formal verification governance.
+- `$bep-software-debugging`: an actual fault investigation.
+- `$bep-delivery-engineering`: migration or deployment work.
+- `$bep-production-verification`: requested deployed-environment regression.
+- `$bep-engineering-review`: a concrete change's outcome and risk.
 
-Preserve the requested task mode. An audit, plan, diagnosis, or review remains
-read-only unless the user separately authorizes implementation.
-
-Do not load every skill mechanically. State which disciplines apply, inspect
-only those areas, and report the observable outcome, blocking findings,
-unresolved risk, and evidence used.
+Load separately installed specialists only when their actual workflow is needed.
+Missing optional specialists are a limitation of that specialist review, not a
+reason to abandon independent work. Report findings with evidence, separate defects
+from preference differences, and identify unresolved verification.

@@ -1,28 +1,27 @@
 ---
 name: bep-software-debugging
-description: Diagnose a reproducible software defect, regression, intermittent failure, or unexplained performance change and identify its causal fix. Do not use for feature implementation, broad refactoring, or speculative hardening without a symptom.
+description: Investigate software failures or performance regressions and implement causal fixes. Not for typos or speculative hardening.
 ---
 
 # Software Debugging
 
-Preserve diagnosis as read-only unless the user also asks for a fix.
+A fix request authorizes local diagnosis, causal correction, and acceptance;
+do not ask again whether to fix it. A diagnosis-only request remains read-only
+for product implementation; use non-mutating probes or disposable reproductions.
 
-1. State the exact observable symptom and establish a fast deterministic
-   reproduction or the closest controlled probe available.
-2. Minimize the reproduction and rank falsifiable causes from available
-   evidence. Test one cause at a time.
-3. Trace the failing path through its real public seam and affected external
-   boundary. Add temporary instrumentation only where it distinguishes causes.
-4. When a fix is authorized, first preserve the symptom as a red-capable
-   regression test at the cheapest layer that proves it completely.
-5. Apply the smallest causal correction, rerun the focused test and original
-   scenario, then remove temporary instrumentation.
+Establish the observable symptom and the smallest deterministic reproduction or
+controlled probe. Rank falsifiable causes from evidence and choose probes that
+distinguish them. Trace the real public seam and affected dependency boundary.
 
-For performance regressions, measure a comparable baseline before changing
-code and inspect unbounded queries, fan-out, concurrency, memory, collections,
-and per-item external calls before micro-optimizing.
+When fixing, preserve a regression proof that catches the original symptom at
+the cheapest sufficient layer where practical. Apply the smallest causal change,
+run it locally, exercise the original scenario, and remove temporary instrumentation.
+Continue until local acceptance passes or a concrete blocker prevents it.
 
-Report the actual cause, the evidence that falsified alternatives, the changed
-behavior when fixed, and any remaining uncertainty. Do not convert an unknown
-or corrupted state into success with a catch, retry, fallback, or timeout
-increase.
+For performance regressions, compare a baseline and investigate queries, fan-out,
+concurrency, memory, and dependency calls before micro-optimizing. In an existing
+project, preserve working contracts and architecture; do not turn a bug fix into
+an unrelated BEP migration. Never disguise an unknown or corrupted state as success
+with a catch, retry, fallback, or timeout increase.
+
+Report the cause, evidence, changed behavior, verification, and remaining uncertainty.

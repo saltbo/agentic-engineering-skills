@@ -1,4 +1,4 @@
 interface:
   display_name: "BEP · Production Verification"
-  short_description: "Verify deployed environments safely and explicitly"
-  default_prompt: "Use $bep-production-verification to design or review this deployed-environment check."
+  short_description: "Run automated or manual post-deployment regression"
+  default_prompt: "Use $bep-production-verification to verify this deployed release with suitable E2E or scoped manual regression."

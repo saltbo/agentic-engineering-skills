@@ -1,5 +1,11 @@
 # Resource Creation And Organization
 
+Scope: apply BEP design preferences directly to new APIs. In an existing API,
+preserve established supported conventions, including version placement, naming,
+and representation shapes. Do not require migration or deprecation merely for
+style conformity. The checks below apply to the changed contract and selected
+profile; security, protocol correctness, and supported behavior remain required.
+
 Use this reference before adding a field, value object, resource, path prefix,
 OpenAPI tag, or API module. HTTP and REST do not define domain decomposition;
 the rules below are this skill's mandatory resource-design policy.
@@ -150,5 +156,5 @@ Reject the design when:
 - a group prefix is likely to change with an internal reorganization;
 - the same resource receives multiple canonical URIs for different groups.
 
-When ownership cannot be proven, report `RESOURCE GROUP INCOMPLETE` and stop
-before defining the path or OpenAPI operation.
+When ownership cannot be established, report the missing decision and pause only
+work dependent on that decision before defining the path or OpenAPI operation.

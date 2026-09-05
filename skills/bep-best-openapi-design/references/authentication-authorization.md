@@ -1,5 +1,11 @@
 # Authentication And Authorization
 
+Scope: apply BEP design preferences directly to new APIs. In an existing API,
+preserve established supported conventions, including version placement, naming,
+and representation shapes. Do not require migration or deprecation merely for
+style conformity. The checks below apply to the changed contract and selected
+profile; security, protocol correctness, and supported behavior remain required.
+
 Use this reference for every protected operation and every API that creates or
 manages identities, credentials, sessions, roles, groups, grants, scopes, or
 policies. Keep authentication and authorization separate in the external

@@ -1,5 +1,11 @@
 # Dataset Export Example
 
+Scope: apply BEP design preferences directly to new APIs. In an existing API,
+preserve established supported conventions, including version placement, naming,
+and representation shapes. Do not require migration or deprecation merely for
+style conformity. The checks below apply to the changed contract and selected
+profile; security, protocol correctness, and supported behavior remain required.
+
 Use this independent scenario to test resource modeling, asynchronous work,
 idempotency, conditional requests, and result discovery. This example explicitly
 selects required date-header versioning and required idempotency keys for export

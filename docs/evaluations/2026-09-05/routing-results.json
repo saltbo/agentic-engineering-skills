@@ -1,0 +1,176 @@
+[
+  {
+    "id": "copy",
+    "initial": [],
+    "conditional": [],
+    "reason": "纯按钮文案拼写修正，所有候选技能均无必要。"
+  },
+  {
+    "id": "etag",
+    "initial": [
+      "bep-software-debugging",
+      "bep-http-engineering"
+    ],
+    "conditional": [
+      "bep-software-testing"
+    ],
+    "reason": "已有 HTTP 缓存语义故障需要因果定位与条件请求修复；明确不改路由或表示，无需 OpenAPI。仅在需要设计或补充回归测试时加载 testing。"
+  },
+  {
+    "id": "legacy",
+    "initial": [
+      "bep-best-openapi-design"
+    ],
+    "conditional": [],
+    "reason": "新增按 ID 获取资源的 REST 路由属于 API 契约设计；普通接口实现不自动触发后端架构或交付技能。"
+  },
+  {
+    "id": "new",
+    "initial": [
+      "bep-best-openapi-design"
+    ],
+    "conditional": [],
+    "reason": "明确要求新服务资源建模与 OpenAPI 契约；未要求后端架构或实现。"
+  },
+  {
+    "id": "unit",
+    "initial": [
+      "bep-software-testing"
+    ],
+    "conditional": [],
+    "reason": "明确要求补充状态机边界自动化测试；沿用 unittest，不涉及正式 CI 治理。"
+  },
+  {
+    "id": "focus",
+    "initial": [],
+    "conditional": [
+      "bep-software-testing",
+      "bep-software-debugging"
+    ],
+    "reason": "只验证既有对话框的焦点恢复可通过观察交互完成，不必先加载架构技能；若决定编写自动化证明则用 testing，若验证失败且转入诊断则用 debugging。"
+  },
+  {
+    "id": "diagnose",
+    "initial": [
+      "bep-software-debugging"
+    ],
+    "conditional": [],
+    "reason": "请求明确是间歇故障因果诊断；诊断技能适用，但不因此授权修改产品。"
+  },
+  {
+    "id": "pyramid",
+    "initial": [
+      "bep-software-testing"
+    ],
+    "conditional": [],
+    "reason": "分层测试策略和本地验收属于自动化测试及证明层设计；没有正式治理要求。"
+  },
+  {
+    "id": "governance",
+    "initial": [
+      "bep-verification-gates"
+    ],
+    "conditional": [
+      "bep-software-testing"
+    ],
+    "reason": "正式覆盖率和阻塞 CI 治理直接匹配 gates；只有建设过程中需要新增或重设具体自动化测试层时再加载 testing。"
+  },
+  {
+    "id": "plan",
+    "initial": [
+      "bep-delivery-engineering"
+    ],
+    "conditional": [
+      "bep-production-verification"
+    ],
+    "reason": "生产发布规划直接匹配 delivery；若方案需要准备具体部署后回归检查，再加载 production-verification，不能执行部署。"
+  },
+  {
+    "id": "deploy",
+    "initial": [
+      "bep-delivery-engineering"
+    ],
+    "conditional": [
+      "bep-production-verification"
+    ],
+    "reason": "先进行部署交付；上线成功进入已部署环境的功能确认阶段时加载 production-verification。"
+  },
+  {
+    "id": "public",
+    "initial": [
+      "bep-production-verification"
+    ],
+    "conditional": [],
+    "reason": "请求检查已公开部署环境的健康端点，属于按请求执行部署环境验证。"
+  },
+  {
+    "id": "review",
+    "initial": [
+      "bep-engineering-review"
+    ],
+    "conditional": [
+      "bep-http-engineering",
+      "bep-backend-engineering"
+    ],
+    "reason": "明确审查具体鉴权变更，先用 review；若变更涉及认证传输或请求生命周期用 http，若涉及后端依赖与责任边界则用 backend。仅凭鉴权二字不预先假定这些实现细节。"
+  },
+  {
+    "id": "state",
+    "initial": [
+      "bep-software-debugging",
+      "bep-frontend-engineering"
+    ],
+    "conditional": [
+      "bep-software-testing"
+    ],
+    "reason": "具体状态同步缺陷需要因果修复，且明确涉及前端状态所有权；需要新增回归测试时再用 testing。"
+  },
+  {
+    "id": "migration",
+    "initial": [
+      "bep-delivery-engineering"
+    ],
+    "conditional": [
+      "bep-backend-engineering",
+      "bep-software-testing"
+    ],
+    "reason": "历史数据迁移及可恢复回填直接匹配 delivery；若实现要求设计事务或工作生命周期边界则用 backend，若设计迁移恢复自动化验证则用 testing。"
+  },
+  {
+    "id": "run",
+    "initial": [],
+    "conditional": [],
+    "reason": "仅运行现有测试，testing 描述明确排除此触发。"
+  },
+  {
+    "id": "audit",
+    "initial": [
+      "bep-best-engineering-practice"
+    ],
+    "conditional": [
+      "bep-backend-engineering",
+      "bep-best-openapi-design",
+      "bep-delivery-engineering",
+      "bep-frontend-engineering",
+      "bep-http-engineering",
+      "bep-production-verification",
+      "bep-software-testing",
+      "bep-verification-gates"
+    ],
+    "reason": "用户明确要求全面工程实践审计，满足 explicit_only；先确定审计范围，再按项目实际包含的学科加载专项技能，不预先加载所有技能。"
+  },
+  {
+    "id": "doc",
+    "initial": [],
+    "conditional": [],
+    "reason": "纯 OpenAPI 描述拼写修正，不涉及资源、路由或表示设计。"
+  },
+  {
+    "id": "queue",
+    "initial": [
+      "bep-backend-engineering"
+    ],
+    "conditional": [],
+    "reason": "持久任务重试、幂等与 outbox 是后端消息、事务及生命周期边界设计；没有 HTTP 请求语义要求。"
+  }
+]

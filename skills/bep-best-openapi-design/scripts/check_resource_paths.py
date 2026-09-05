@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reject explicit action-oriented API paths."""
+"""Check path structure and optionally enforce the BEP path profile."""
 
 from __future__ import annotations
 
@@ -83,13 +83,17 @@ PATH_VERSION_SEGMENT = re.compile(r"^v[0-9]+$", re.IGNORECASE)
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Reject explicit verbs, RPC suffixes, and command selectors in API paths."
+        description="Check API paths against the BEP or existing-contract profile."
+    )
+    parser.add_argument(
+        "--profile", choices=("bep", "existing"), default="bep",
+        help="bep enforces BEP style; existing checks structure without changing conventions.",
     )
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--file", type=Path, help="Read one API path per line.")
     source.add_argument("paths", nargs="*", help="API paths to check.")
     args = parser.parse_args()
-    if args.paths is not None and not args.paths:
+    if args.file is None and not args.paths:
         parser.error("provide at least one API path")
     return args
 
@@ -105,12 +109,26 @@ def load_paths(args: argparse.Namespace) -> list[str]:
     ]
 
 
-def audit_path(raw_path: str) -> list[str]:
+def audit_path(raw_path: str, profile: str = "bep") -> list[str]:
+    if profile not in {"bep", "existing"}:
+        raise ValueError(f"unknown profile: {profile}")
     violations: list[str] = []
     parsed = urlsplit(raw_path)
 
-    if not parsed.path.startswith("/"):
-        violations.append("path must start with '/'")
+    if parsed.scheme or parsed.netloc or not raw_path.startswith("/"):
+        violations.append("provide an absolute path starting with '/', not a URL")
+    if parsed.fragment:
+        violations.append("API path must not contain a fragment")
+    if any(char.isspace() for char in raw_path):
+        violations.append("API path must not contain literal whitespace")
+    if "//" in parsed.path:
+        violations.append("API path must not contain an empty segment")
+    path_without_parameters = re.sub(r"\{[^{}]+\}", "", parsed.path)
+    if "{" in path_without_parameters or "}" in path_without_parameters:
+        violations.append("path parameters must have balanced non-empty braces")
+
+    if profile == "existing":
+        return violations
 
     for encoded_segment in parsed.path.split("/"):
         if not encoded_segment:
@@ -155,7 +173,7 @@ def main() -> int:
 
     failures = 0
     for path in paths:
-        violations = audit_path(path)
+        violations = audit_path(path, args.profile)
         for violation in violations:
             print(f"{path}: {violation}", file=sys.stderr)
             failures += 1
@@ -164,7 +182,7 @@ def main() -> int:
         print(f"Resource path audit failed with {failures} violation(s).", file=sys.stderr)
         return 1
 
-    print(f"Resource path audit passed for {len(paths)} path(s).")
+    print(f"Path check passed for {len(paths)} path(s) under {args.profile} profile; resource semantics require review.")
     return 0
 
 

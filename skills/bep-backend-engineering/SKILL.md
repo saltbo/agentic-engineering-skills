@@ -1,25 +1,30 @@
 ---
 name: bep-backend-engineering
-description: Design, restructure, or review backend architecture for services, workers, CLI processes, persistence, messaging, external integrations, dependency ownership, transactions, or service lifecycle. Do not use for a small backend edit that does not affect these boundaries.
+description: Design, restructure, or review backend ownership, dependencies, transactions, messaging, or lifecycle. Not for ordinary handler edits.
 ---
 
 # Backend Engineering
 
-Apply backend-specific architecture guidance without loading unrelated frontend,
-HTTP, delivery, or verification policy.
+For a new project, apply BEP dependency and ownership preferences directly.
+For an existing project, inspect the affected boundary and preserve its working
+conventions and supported contracts. Improve local design without turning a
+feature or fix into an architecture migration.
 
-- Read [references/architecture.md](references/architecture.md) when the task
-  changes module responsibilities, dependency direction, use cases, ports,
-  persistence, caching, queues, events, configuration, or process lifecycle.
-- Read [references/verification.md](references/verification.md) only when the
-  task designs or reviews backend proof inventories, boundary tests, migrations,
-  architecture enforcement, or lifecycle verification.
-- Use `$bep-http-engineering` only when HTTP protocol behavior is in scope.
-- Use `$bep-best-openapi-design` only when a REST/OpenAPI contract is designed or
-  changed.
-- Use `$bep-software-testing` for general test-layer decisions and
-  `$bep-verification-gates` only for formal coverage or CI governance.
+Read only what the decision needs:
 
-Preserve the requested mode and repository conventions. Keep business policy
-independent from transports and providers, make state and dependency ownership
-explicit, and avoid layers that only forward calls.
+- [Ownership](references/ownership.md): module boundaries, dependency injection,
+  use cases, ports, models, and stable errors.
+- [Persistence](references/persistence.md): transactions, repositories, and caches.
+- [Messaging](references/messaging.md): queues, durable jobs, and events.
+- [Lifecycle](references/lifecycle.md): startup, readiness, and shutdown.
+- [Verification](references/verification.md): only when designing or auditing
+  formal backend proof inventories and architecture enforcement.
+
+Use `$bep-http-engineering` only for an HTTP semantic change and
+`$bep-best-openapi-design` only for REST resource or representation design.
+These are optional specialist workflows, not prerequisites for backend work.
+
+For implementation, complete local acceptance: run the smallest meaningful
+checks and exercise the changed behavior, fix failures caused by the change,
+and report evidence. For test design use `$bep-software-testing`; merely running
+existing tests does not require loading it. Review-only requests remain read-only.

@@ -1,0 +1,34 @@
+{
+  "legacy": {
+    "routes": [
+      "/v1/orders",
+      "/v1/orders/o1",
+      "/v1/orders/missing"
+    ],
+    "statuses": [
+      200,
+      200,
+      404
+    ],
+    "success_envelope": "data",
+    "error_code": "NOT_FOUND",
+    "no_migration": true
+  },
+  "new": {
+    "required_paths": [
+      "/orders",
+      "/orders/{orderId}"
+    ],
+    "path_version": false,
+    "pagination": "page",
+    "single_resource_data_envelope": false
+  },
+  "deploy": {
+    "version": "r2",
+    "journey_total": 1200,
+    "local_acceptance_before_deploy": true,
+    "deployed_product_read_after_deploy": true,
+    "local_reset_not_in_live_subset": true,
+    "shared_assertions": true
+  }
+}

@@ -1,5 +1,11 @@
 # Resource Modeling
 
+Scope: apply BEP design preferences directly to new APIs. In an existing API,
+preserve established supported conventions, including version placement, naming,
+and representation shapes. Do not require migration or deprecation merely for
+style conformity. The checks below apply to the changed contract and selected
+profile; security, protocol correctness, and supported behavior remain required.
+
 Use this reference while discovering resources, canonical URIs, representations,
 and state transitions. Do not design an API operation until every addressed
 resource passes this gate.
@@ -110,9 +116,10 @@ When it does not, express the resulting state through a legitimate update to the
 addressed resource only if that state is genuinely part of the client-writable
 representation.
 
-If no candidate passes the abstraction gate, stop with `RESOURCE MODEL
-INCOMPLETE`. State which identity, ownership, representation, lifecycle, or
-canonical-URI decision is missing. Do not create a command endpoint.
+If no candidate passes the abstraction gate for a new BEP resource, identify the
+missing identity, ownership, representation, lifecycle, or URI decision. Propose
+an evidence-based model when possible; pause only work that depends on an
+unresolved product decision. Do not invent a command endpoint to bypass modeling.
 
 ## Shape Representations
 

@@ -1,0 +1,7 @@
+["local-test"]
+["get", "deployed", "/version"]
+["get", "deployed", "/orders/o1"]
+["deploy", "r2"]
+["get", "deployed", "/version"]
+["get", "deployed", "/health"]
+["get", "deployed", "/orders/o1"]

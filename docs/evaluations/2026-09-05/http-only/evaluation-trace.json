@@ -1,0 +1,28 @@
+{
+  "task": "Fix matching If-None-Match returning 200 while preserving the GET contract",
+  "skill_selection": {
+    "catalog": "catalog.json",
+    "selected": ["bep-http-engineering"],
+    "reason": "Existing conditional GET cache validator behavior is an HTTP lifecycle fix; routes and representations do not change.",
+    "additional_skills": [],
+    "openapi_required": false
+  },
+  "references_read": [
+    "../skills/bep-http-engineering/SKILL.md",
+    "../skills/bep-http-engineering/references/contract.md"
+  ],
+  "project_artifacts_read": ["catalog.json", "README.md", "handler.py"],
+  "commands_and_results": [
+    {"command": "ls -la; cat catalog.json; cat README.md; cat handler.py", "result": "Inspected only assigned case inventory, candidate catalog and project artifacts; exit 0."},
+    {"command": "cat ../skills/bep-http-engineering/SKILL.md", "result": "Read selected skill; exit 0. Actual command used equivalent absolute path."},
+    {"command": "cat ../skills/bep-http-engineering/references/contract.md", "result": "Read changed caching and compatibility dimensions; exit 0. Actual command used equivalent absolute path."},
+    {"command": "python3 -B -m unittest discover -v", "result": "PASS: 3 tests containing 26 header subcases; exit 0."},
+    {"command": "python3 -B - (inline regression script replacing test_handler.get with the original implementation)", "result": "PASS: original implementation fails all 10 matching-header cases, with no errors and all other cases passing; exit 0."}
+  ],
+  "implementation": "Parse complete entity-tag lists before weak comparison; support wildcard, whitespace, comma-containing opaque tags and empty list members. Matching GET returns 304, unchanged ETag and an empty body. Absent, nonmatching and malformed conditions preserve the original 200 representation.",
+  "files_changed": ["handler.py", "test_handler.py", "evaluation-trace.json"],
+  "blockers": [],
+  "questions": [],
+  "network_or_identity_access": false,
+  "outcome": "completed"
+}

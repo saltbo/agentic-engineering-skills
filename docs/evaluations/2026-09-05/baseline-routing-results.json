@@ -1,0 +1,191 @@
+[
+  {
+    "id": "copy",
+    "initial": [],
+    "conditional": [],
+    "reason": "Mechanical button-copy correction does not require an engineering skill."
+  },
+  {
+    "id": "etag",
+    "initial": [
+      "bep-software-debugging",
+      "bep-http-engineering"
+    ],
+    "conditional": [
+      "bep-software-testing"
+    ],
+    "reason": "The reported conditional-request defect needs diagnosis and HTTP caching semantics; testing becomes relevant if adding regression proof."
+  },
+  {
+    "id": "legacy",
+    "initial": [
+      "bep-best-openapi-design"
+    ],
+    "conditional": [
+      "bep-backend-engineering",
+      "bep-delivery-engineering"
+    ],
+    "reason": "Adding an API operation requires resource and contract design; backend architecture or delivery skills apply if implementation changes those boundaries or existing compatibility."
+  },
+  {
+    "id": "new",
+    "initial": [
+      "bep-best-openapi-design"
+    ],
+    "conditional": [
+      "bep-backend-engineering"
+    ],
+    "reason": "The requested initial work is resource modeling and OpenAPI contracts; backend architecture is conditional on moving into service implementation boundaries."
+  },
+  {
+    "id": "unit",
+    "initial": [
+      "bep-software-testing"
+    ],
+    "conditional": [],
+    "reason": "Explicit boundary-test implementation belongs to software testing; retaining unittest does not imply verification governance."
+  },
+  {
+    "id": "focus",
+    "initial": [
+      "bep-frontend-engineering"
+    ],
+    "conditional": [
+      "bep-software-testing",
+      "bep-software-debugging"
+    ],
+    "reason": "Reviewing dialog focus restoration is accessibility verification; automated regression tests or diagnosis become relevant if requested or a failure is observed."
+  },
+  {
+    "id": "diagnose",
+    "initial": [
+      "bep-software-debugging"
+    ],
+    "conditional": [],
+    "reason": "An intermittent failure calls for diagnosis; no implementation or unspecified subsystem skill is necessary at task start."
+  },
+  {
+    "id": "pyramid",
+    "initial": [
+      "bep-software-testing"
+    ],
+    "conditional": [
+      "bep-verification-gates"
+    ],
+    "reason": "Layered tests and local acceptance commands are testing strategy; gates are conditional on adopting formal blocking governance."
+  },
+  {
+    "id": "governance",
+    "initial": [
+      "bep-verification-gates"
+    ],
+    "conditional": [
+      "bep-software-testing"
+    ],
+    "reason": "Formal coverage and blocking CI governance directly match verification gates; test design is needed later only if missing proof must be implemented."
+  },
+  {
+    "id": "plan",
+    "initial": [
+      "bep-delivery-engineering"
+    ],
+    "conditional": [
+      "bep-production-verification"
+    ],
+    "reason": "Production release planning requires delivery engineering; a detailed deployed-environment verification profile would additionally use production verification."
+  },
+  {
+    "id": "deploy",
+    "initial": [
+      "bep-delivery-engineering"
+    ],
+    "conditional": [
+      "bep-production-verification"
+    ],
+    "reason": "Deployment begins with delivery engineering; after deployment, checking the changed behavior requires production verification."
+  },
+  {
+    "id": "public",
+    "initial": [
+      "bep-production-verification"
+    ],
+    "conditional": [],
+    "reason": "The request is a bounded verification check against an already deployed public environment."
+  },
+  {
+    "id": "review",
+    "initial": [
+      "bep-engineering-review"
+    ],
+    "conditional": [
+      "bep-http-engineering",
+      "bep-best-openapi-design",
+      "bep-backend-engineering",
+      "bep-frontend-engineering"
+    ],
+    "reason": "An explicit concrete authentication-change review needs engineering review first; transport, API contracts, or subsystem architecture skills depend on the actual change."
+  },
+  {
+    "id": "state",
+    "initial": [
+      "bep-software-debugging",
+      "bep-frontend-engineering"
+    ],
+    "conditional": [
+      "bep-software-testing"
+    ],
+    "reason": "A stated remote-data and store synchronization defect needs diagnosis and frontend state ownership work; regression-test design is conditional."
+  },
+  {
+    "id": "migration",
+    "initial": [
+      "bep-delivery-engineering",
+      "bep-backend-engineering"
+    ],
+    "conditional": [
+      "bep-software-testing"
+    ],
+    "reason": "Historical-data migration and resumable backfill involve persisted-data delivery and backend persistence/lifecycle boundaries; dedicated migration-test work may follow."
+  },
+  {
+    "id": "run",
+    "initial": [],
+    "conditional": [],
+    "reason": "Running existing tests without changing code does not trigger test-design or governance skills."
+  },
+  {
+    "id": "audit",
+    "initial": [
+      "bep-best-engineering-practice"
+    ],
+    "conditional": [
+      "bep-backend-engineering",
+      "bep-best-openapi-design",
+      "bep-delivery-engineering",
+      "bep-engineering-review",
+      "bep-frontend-engineering",
+      "bep-http-engineering",
+      "bep-production-verification",
+      "bep-software-debugging",
+      "bep-software-testing",
+      "bep-verification-gates"
+    ],
+    "reason": "The comprehensive engineering-practice audit explicitly satisfies the explicit-only trigger; narrower skills depend on audited surfaces and identified findings."
+  },
+  {
+    "id": "doc",
+    "initial": [],
+    "conditional": [],
+    "reason": "A description-only spelling correction changes no OpenAPI contract or resource model."
+  },
+  {
+    "id": "queue",
+    "initial": [
+      "bep-backend-engineering"
+    ],
+    "conditional": [
+      "bep-software-testing"
+    ],
+    "reason": "Durable-task retry, idempotency, and outbox ownership concern messaging and transaction architecture; these do not inherently require HTTP skills. Test design is conditional on implementation proof."
+  }
+]

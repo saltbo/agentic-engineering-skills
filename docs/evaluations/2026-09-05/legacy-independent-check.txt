@@ -1,0 +1,11 @@
+test_list (test_api.ApiTests.test_list) ... ok
+test_read_missing_order (test_api.ApiTests.test_read_missing_order) ... ok
+test_read_order (test_api.ApiTests.test_read_order) ... ok
+test_unmatched_routes_keep_existing_error (test_api.ApiTests.test_unmatched_routes_keep_existing_error) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.000s
+
+OK
+
+Independent route/envelope assertions: PASS

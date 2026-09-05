@@ -1,5 +1,11 @@
 # Canonical HTTP Examples
 
+Scope: apply BEP design preferences directly to new APIs. In an existing API,
+preserve established supported conventions, including version placement, naming,
+and representation shapes. Do not require migration or deprecation merely for
+style conformity. The checks below apply to the changed contract and selected
+profile; security, protocol correctness, and supported behavior remain required.
+
 Use these examples as the default output shape. Replace the domain names and
 schemas, but preserve the protocol rules. The examples use the `identity-access`
 domain group and a page-pagination project profile. They intentionally omit an

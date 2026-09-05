@@ -1,0 +1,24 @@
+Event order and live setup isolation: PASS
+test_read_order_total (test_e2e.OrderJourney.test_read_order_total) ... ok
+test_health (test_e2e.OrderJourney.test_health) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.042s
+
+OK
+
+Wrong release negative check: PASS (nonzero)
+setUpClass (test_e2e.OrderJourney) ... ERROR
+
+======================================================================
+ERROR: setUpClass (test_e2e.OrderJourney)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bx/csxs03ws5dz5fcg48tg4fbcw0000gn/T/tmprzbyq43h/deploy/test_e2e.py", line 27, in setUpClass
+    raise AssertionError('Target does not serve expected release')
+AssertionError: Target does not serve expected release
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.014s
+
+FAILED (errors=1)

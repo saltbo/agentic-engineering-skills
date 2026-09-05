@@ -1,17 +1,18 @@
 # Frontend Verification Profile
 
-Apply this profile when production or review affects browser routes, typed
-transports, feature operations, forms, navigation, browser state, accessibility,
-security, compatibility, performance, responsive behavior, or visual quality.
-Use `$bep-software-testing` when proof-layer design is in scope and
-`$bep-verification-gates` when formal coverage or blocking CI governance is in
-scope. Neither is a prerequisite for reading this profile.
+Apply this profile only when designing or auditing formal runtime proof
+inventories or architecture/browser-quality governance. New governance uses BEP
+preferences; existing projects retain their adopted policy unless transition is
+in scope. Ordinary runtime edits require focused local acceptance, not these
+inventories. Prove each behavior at its cheapest complete layer; additional layers
+cover distinct integration risks. Use `$bep-verification-gates` for shared identity,
+coverage, and execution protocols only when that governance is in scope.
 
 ## Contents
 
 - [Generate The Frontend Behavior Inventory](#generate-the-frontend-behavior-inventory)
 - [Derive Required Profiles](#derive-required-profiles)
-- [Prove Behavior At The Canonical Unit Layer](#prove-behavior-at-the-canonical-unit-layer)
+- [Prove Behavior At Its Owning Layer](#prove-behavior-at-its-owning-layer)
 - [Prove Browser Behavior](#prove-browser-behavior)
 - [Block On Browser Quality](#block-on-browser-quality)
 - [Enforce Frontend Architecture Mechanically](#enforce-frontend-architecture-mechanically)
@@ -80,12 +81,13 @@ Reject query/command contradictions, undo without destructive work, optimistic
 destructive work, or a read/write mode that disagrees with the linked server
 operation. Every operation must be bound, and every entry requires `wired`.
 
-## Prove Behavior At The Canonical Unit Layer
+## Prove Behavior At Its Owning Layer
 
-Prove every frontend inventory pair in the canonical Unit layer with semantic
-feature interactions and a protocol-level API Fake. A `web`, component, jsdom,
-or real-browser component project remains a Unit runtime subdivision while it
-does not cross the real application boundary.
+Assign each frontend inventory pair to its cheapest sufficient layer. Use Unit
+for feature decisions and browserless interactions through a protocol-level Fake.
+Use real-browser Integration for browser-only semantics and E2E for critical
+cross-stack journeys. Runtime choice alone does not classify a test: a browser
+component test without a real application boundary can still be Unit.
 
 Mock only real browser or protocol boundaries, never internal hooks, child
 components, query definitions, private state, or the typed client. Keep Unit and
@@ -93,9 +95,10 @@ component tests beside feature source. Keep cross-boundary Integration, visual,
 and E2E suites in explicit suite directories.
 
 Test through accessible roles, names, content, navigation, and user events.
-Critical authentication continuity, focus, navigation, layout, and cross-stack
-risks require additional real-browser or E2E proof. Those tests complement and
-never replace the complete canonical Unit behavior matrix.
+Authentication continuity, focus, navigation, layout, and cross-stack behavior
+need proof in the actual runtime that owns them. Their browser/E2E tests are the
+canonical proof for those semantics; do not also require an insufficient Unit
+matrix. Repeat only when an additional layer proves a distinct material risk.
 
 ## Prove Browser Behavior
 
@@ -158,7 +161,7 @@ Reject completion when any of the following is true:
   manually entered, excepted, or uncovered;
 - a transport trusts an undecoded runtime value or lacks stable protocol
   failure normalization;
-- a route, operation, or concrete binding lacks canonical Unit proof;
+- a route, operation, or concrete binding lacks proof at its owning layer;
 - a create, edit, or configuration form binds directly to a primary browsing
   surface;
 - authentication, focus, navigation, layout, security, or compatibility risk

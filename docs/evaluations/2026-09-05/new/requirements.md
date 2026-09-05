@@ -1,0 +1,1 @@
+New order API. Orders have server-generated IDs, tenant owner, pending/shipped lifecycle, total in integer cents. Need create, get, list by status. Small operator UI requires exact totals and numbered pages. No existing clients, framework, or contract conventions. Produce an OpenAPI JSON artifact and design rationale; no server implementation requested.

@@ -1,29 +1,26 @@
 ---
 name: bep-delivery-engineering
-description: Plan, implement, or review compatibility changes, persisted-data migrations, dependency or tool reproducibility, feature-flag transitions, releases, deployment sequencing, rollback, or roll-forward. Do not use for an unreleased internal edit with no delivery boundary.
+description: Plan, execute, or review releases, deployments, data/contract migrations, or rollback. Not for ordinary local implementation.
 ---
 
 # Delivery Engineering
 
-Establish the supported release baseline before preserving compatibility. Do
-not add compatibility branches for unpublished behavior or environments without
-a support promise.
+Distinguish preparation, review, and an authorized deployment. Preserve the
+requested mode: a release plan is not authority to publish. Once deployment is
+authorized, carry it through post-deployment regression within that authority.
 
-- Improve unreleased contracts directly and update their current callers.
-- For a supported contract, follow its version and migration policy.
-- Give compatibility paths, dual reads or writes, and feature flags an owner,
-  supported range, observability, tests, and deletion condition.
-- Use expand–migrate–switch–contract for live data or rolling deployment when
-  required. Make backfills resumable and verify upgrades from every supported
-  persisted version.
-- Lock dependency and critical tool versions. Use deterministic generation and
-  build commands shared by local development and CI.
-- Publish immutable, traceable artifacts and keep generated artifacts with the
-  source change when they form one logical unit.
-- Define rollback or a prepared roll-forward before production release. Do not
-  claim rollback safety when a data or public-contract transition is
-  irreversible.
+- [Compatibility](references/compatibility.md): supported versions, persisted-data
+  migrations, feature-flag transitions, rollback, and reproducible artifacts.
+- [Deployment](references/deployment.md): local acceptance, target and artifact
+  selection, provider execution, live regression, and recovery.
 
-Preserve the requested task mode. Report the supported versions, transition
-sequence, owners, observability, executable proof, removal conditions, and
-remaining operational risk.
+For a new project, establish BEP delivery conventions appropriate to its actual
+runtime. In an existing project, use its release commands, support promise, API
+version policy, and rollout strategy. Do not force modernization as part of a
+routine deployment. Improve unpublished behavior directly where no supported
+consumer or persisted-data boundary requires compatibility.
+
+Use `$bep-production-verification` for post-deployment regression when available.
+If it is not installed, follow the bounded regression requirements in the
+Deployment reference; missing optional skills must not erase the release checks.
+Report preparation, deployment, and regression outcomes distinctly.
